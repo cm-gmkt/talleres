@@ -1,1 +1,2730 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>ARQCOES · Sesión 2 · Laboratorio de decisiones</title>
+<style>
+:root{
+  --navy:#14213D;
+  --cream:#F5F3EE;
+  --white:#FFFFFF;
+  --orange:#D87348;
+  --soft-orange:#F5E4DB;
+  --gray:#667085;
+  --line:#DDD7CE;
+  --line-strong:#C9C1B7;
+  --ink:#263550;
+  --green:#2E7D5B;
+  --red:#A8473A;
+  --yellow:#A56B12;
+  --shadow:0 18px 48px rgba(20,33,61,.07);
+  --shadow-soft:0 8px 24px rgba(20,33,61,.05);
+  --radius-xl:30px;
+  --radius-lg:22px;
+  --radius-md:15px;
+  --max:1320px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  overflow-x:hidden;
+  color:var(--navy);
+  background:var(--cream);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.48;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin-top:0;text-wrap:balance}
+::selection{background:var(--orange);color:#fff}
+.container{width:min(calc(100% - 80px),var(--max));margin:0 auto}
+.muted{color:var(--gray)}
+.orange{color:var(--orange)}
+.smallcaps{font-size:.72rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+.eyebrow{font-size:.76rem;font-weight:950;letter-spacing:.13em;text-transform:uppercase;color:var(--orange)}
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 10px;border-radius:999px;
+  font-size:.67rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--soft-orange);color:var(--orange);
+}
+.card{
+  background:var(--white);
+  border:1px solid rgba(20,33,61,.09);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-soft);
+}
+.card.dark{background:var(--navy);color:white;border-color:var(--navy)}
+.card.soft{background:var(--soft-orange)}
+.btn{
+  appearance:none;border:0;border-radius:11px;padding:9px 12px;
+  font-weight:850;transition:.18s ease;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-ghost{background:white;color:var(--navy);border:1px solid var(--line)}
+.btn-danger{background:#fff;color:var(--red);border:1px solid #E7C7C2}
+.btn-sm{padding:7px 9px;font-size:.76rem}
+.icon-btn{
+  width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:white;border:1px solid var(--line);color:var(--navy);font-weight:950;
+}
+input[type="text"],input[type="date"],input[type="time"],select,textarea{
+  width:100%;
+  border:1px solid #D8D1C8;
+  background:#fff;
+  color:var(--navy);
+  border-radius:11px;
+  padding:10px 11px;
+  outline:none;
+  transition:border-color .15s, box-shadow .15s, background .15s;
+}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--orange);
+  box-shadow:0 0 0 3px rgba(216,115,72,.12);
+}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--orange)}
+label.field-label{
+  display:block;margin:0 0 6px;
+  font-size:.72rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:#58647A;
+}
+.field-help{margin-top:5px;color:var(--gray);font-size:.72rem}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-stack{display:grid;gap:12px}
+.notice{
+  padding:14px 16px;border-radius:15px;background:var(--soft-orange);
+  border-left:4px solid var(--orange);font-weight:760;
+}
+.notice.dark{background:var(--navy);color:white;border-left-color:#FFA57C}
+.hidden{display:none!important}
 
+/* HEADER */
+.app-header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(245,243,238,.96);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(20,33,61,.09);
+}
+.header-main{
+  width:min(calc(100% - 80px),var(--max));margin:0 auto;
+  min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand-line{display:flex;align-items:center;gap:12px;min-width:250px}
+.brand-dot{width:11px;height:11px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 6px rgba(216,115,72,.12)}
+.brand-title{font-weight:950;letter-spacing:.05em;text-transform:uppercase;font-size:.78rem}
+.brand-sub{font-size:.73rem;color:var(--gray);margin-top:1px}
+.header-center{text-align:center;min-width:230px}
+.header-center strong{display:block;font-size:.88rem}
+.header-center span{display:block;color:var(--gray);font-size:.72rem}
+.header-actions{display:flex;align-items:center;gap:7px}
+.save-state{
+  display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;
+  background:#EDF6F1;color:var(--green);font-size:.7rem;font-weight:850;white-space:nowrap;
+}
+.save-state i{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.progress-shell{border-top:1px solid rgba(20,33,61,.06);background:rgba(255,255,255,.66)}
+.progress-row{
+  width:min(calc(100% - 80px),var(--max));margin:0 auto;
+  height:46px;display:flex;align-items:center;gap:14px;
+}
+.progress-count{font-size:.72rem;font-weight:950;color:var(--orange);min-width:46px}
+.progress-track{height:4px;background:#DED8CF;border-radius:999px;flex:1;overflow:hidden}
+.progress-bar{height:100%;width:9.09%;background:var(--orange);border-radius:999px;transition:width .25s ease}
+.anchor-nav{display:flex;gap:6px;overflow:auto;scrollbar-width:none;max-width:760px}
+.anchor-nav::-webkit-scrollbar{display:none}
+.anchor-nav a{
+  padding:6px 9px;border-radius:999px;font-size:.68rem;font-weight:800;color:#69758A;white-space:nowrap;
+}
+.anchor-nav a.active{background:var(--navy);color:white}
+
+/* HERO TOOL */
+.tool-hero{padding:54px 0 34px}
+.tool-hero-grid{
+  display:grid;grid-template-columns:1fr .8fr;gap:46px;align-items:end;
+}
+.tool-hero-grid > *,
+.header-main > *,
+.header-actions,
+.brand-line{min-width:0}
+.tool-title{
+  margin:7px 0 0;font-size:clamp(44px,5.2vw,78px);line-height:.88;
+  letter-spacing:-.055em;text-transform:uppercase;font-weight:950;
+  max-width:100%;
+}
+.tool-title span{color:var(--orange)}
+.tool-lead{font-size:1.07rem;color:var(--gray);max-width:760px;margin:20px 0 0}
+.hero-panel{padding:24px;width:100%;max-width:480px;justify-self:end}
+.hero-panel .big{font-size:1.5rem;font-weight:950;line-height:1.05;margin:7px 0}
+.hero-panel p{margin:0;color:var(--gray)}
+
+/* SECTION */
+.work-section{padding:46px 0;scroll-margin-top:126px}
+.work-section.white{background:white}
+.work-section.soft{background:var(--soft-orange)}
+.work-section.navy{background:var(--navy);color:white}
+.section-head{
+  display:grid;grid-template-columns:78px 1fr auto;gap:18px;align-items:start;margin-bottom:26px;
+}
+.section-index{
+  width:62px;height:62px;border-radius:50%;
+  display:grid;place-items:center;background:var(--orange);color:white;font-size:1.05rem;font-weight:950;
+}
+.section-title{font-size:clamp(30px,3.3vw,50px);line-height:.93;letter-spacing:-.04em;text-transform:uppercase;font-weight:950;margin:0}
+.section-sub{color:var(--gray);margin:9px 0 0;max-width:850px}
+.navy .section-sub{color:#CDD5E1}
+.section-status{
+  align-self:center;padding:7px 10px;border-radius:999px;background:#EEEAE4;color:#667085;
+  font-size:.67rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;
+}
+.navy .section-status{background:rgba(255,255,255,.1);color:#E4E9F1}
+
+/* 01 */
+.known-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}
+.known-box{padding:24px}
+.known-list{display:grid;gap:0;margin-top:15px}
+.known-item{display:flex;gap:11px;padding:11px 0;border-top:1px solid rgba(255,255,255,.11)}
+.known-item:first-child{border-top:0}
+.known-dot{width:8px;height:8px;border-radius:50%;background:#FFA57C;margin-top:7px;flex:0 0 auto}
+.validation-list{display:grid;gap:10px;margin-top:15px}
+.validation-card{
+  padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;
+}
+.validation-top{
+  display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:center;margin-bottom:10px;
+}
+.validation-title{font-weight:900}
+.validation-card textarea{min-height:66px}
+.recap-change{margin-top:18px;padding:20px}
+
+/* tables */
+.table-wrap{
+  overflow-x:auto;border:1px solid var(--line);border-radius:17px;background:white;
+  scrollbar-color:#BFB7AD transparent;
+}
+table{width:100%;border-collapse:separate;border-spacing:0;min-width:1050px}
+th{
+  position:sticky;top:120px;z-index:4;
+  background:var(--navy);color:white;text-align:left;
+  padding:11px 9px;font-size:.69rem;letter-spacing:.06em;text-transform:uppercase;
+}
+td{border-bottom:1px solid #E8E3DC;padding:7px;vertical-align:top;background:white}
+tr:last-child td{border-bottom:0}
+td input,td select,td textarea{
+  border:0;background:#FAF8F5;border-radius:8px;padding:8px;font-size:.78rem;
+}
+td textarea{min-height:58px}
+td.moment{min-width:185px;font-weight:850;font-size:.8rem;padding:13px 10px}
+.row-actions{display:flex;gap:5px;align-items:center;justify-content:center;padding-top:4px}
+.table-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+
+/* Legend */
+.legend-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 18px}
+.legend-card{padding:15px;border-radius:15px;border:1px solid var(--line);background:white}
+.legend-card.dark{background:var(--navy);color:white}
+.legend-card.soft{background:var(--soft-orange)}
+.legend-card b{display:block;margin-bottom:3px}
+.legend-card span{font-size:.77rem;color:var(--gray)}
+.legend-card.dark span{color:#D8E0EB}
+
+/* 03 automation */
+.auto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.auto-card{padding:20px}
+.auto-number{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:18px}
+.auto-number strong{font-size:1rem}
+.auto-card textarea{min-height:70px}
+.auto-card .field-row{grid-template-columns:1fr 1fr}
+
+/* 04 audit */
+.audit-banner{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:18px}
+.timebox{
+  display:inline-flex;align-items:center;gap:9px;background:var(--orange);color:white;
+  padding:9px 13px;border-radius:12px;font-weight:900;font-size:.78rem;
+}
+.audit-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.audit-group{padding:20px}
+.audit-group-head{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.audit-letter{
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:white;font-weight:950;
+}
+.audit-group h3{margin:0;font-size:1rem;letter-spacing:.06em}
+.audit-point{padding:13px 0;border-top:1px solid #EEE8E0}
+.audit-point:first-of-type{border-top:0}
+.audit-point-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:7px}
+.audit-point strong{font-size:.84rem}
+.tech-switch{
+  display:inline-flex;align-items:center;gap:6px;font-size:.63rem;font-weight:850;color:var(--gray);white-space:nowrap;
+}
+.tech-switch input{width:auto}
+.check-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px}
+.check-list label{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border-radius:999px;background:#F7F4F0;font-size:.72rem;font-weight:800;
+}
+
+/* 05 pipeline */
+.rule-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);margin-bottom:18px
+}
+.rule-word{padding:18px 20px}
+.rule-word + .rule-word{border-left:1px solid var(--line)}
+.rule-word span{display:block;color:var(--orange);font-size:.68rem;font-weight:950;letter-spacing:.09em}
+.rule-word b{font-size:1.35rem;letter-spacing:-.03em}
+
+/* 06 TOBE */
+.tobe-group{margin-bottom:18px}
+.tobe-group-head{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:14px 17px;background:var(--navy);color:white;border-radius:16px 16px 0 0;
+}
+.tobe-group-head b{letter-spacing:.08em;font-size:.82rem}
+.tobe-group .table-wrap{border-radius:0 0 16px 16px;border-top:0}
+.tobe-empty{
+  padding:18px;background:white;color:var(--gray);font-size:.78rem;border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px;
+}
+.tobe-group.has-rows .tobe-empty{display:none}
+
+/* 07 quality */
+.quality-list{display:grid;gap:10px}
+.quality-item{padding:15px 17px;border:1px solid var(--line);border-radius:16px;background:white}
+.quality-row{display:grid;grid-template-columns:1fr 270px;gap:14px;align-items:center}
+.quality-q{font-weight:850}
+.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#F0ECE6;padding:4px;border-radius:11px}
+.segmented label{position:relative}
+.segmented input{position:absolute;opacity:0;pointer-events:none}
+.segmented span{
+  display:block;text-align:center;padding:7px 8px;border-radius:8px;font-size:.7rem;font-weight:900;color:#6E788A;cursor:pointer
+}
+.segmented input:checked + span{background:white;color:var(--navy);box-shadow:0 2px 8px rgba(20,33,61,.08)}
+.segmented input[value="SI"]:checked + span{color:var(--red)}
+.segmented input[value="NO"]:checked + span{color:var(--green)}
+.quality-fix{margin-top:10px}
+.leak-summary{margin-top:16px;padding:18px}
+.leak-summary ul{margin:8px 0 0;padding-left:18px}
+
+/* 08 prioritization */
+.priority-toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:14px}
+.priority-list{display:grid;gap:10px}
+.priority-item{
+  display:grid;grid-template-columns:64px 1.2fr 125px .9fr 110px .8fr .8fr .9fr 78px;
+  gap:9px;align-items:start;padding:12px;border-radius:16px;background:white;border:1px solid var(--line);
+}
+.priority-item[data-priority="P0"]{border-left:8px solid var(--navy);background:#F6F7FA}
+.priority-item[data-priority="P1"]{border-left:8px solid var(--orange);background:#FFF7F3}
+.priority-item[data-priority="P2"]{border-left:8px solid #CFC8C0}
+.priority-item[data-priority="P3"]{border:1px dashed #AFA79D;background:transparent}
+.priority-badge{
+  height:42px;border-radius:11px;display:grid;place-items:center;background:var(--navy);color:white;font-weight:950
+}
+.priority-item[data-priority="P1"] .priority-badge{background:var(--orange)}
+.priority-item[data-priority="P2"] .priority-badge{background:#B9B0A7}
+.priority-item[data-priority="P3"] .priority-badge{background:transparent;color:var(--gray);border:1px solid #AFA79D}
+.priority-item textarea{min-height:54px}
+.move-stack{display:flex;gap:4px}
+
+/* 09 roadmap */
+.road-note{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:13px}
+.road-count{font-weight:900;color:var(--orange)}
+#roadmapTable{min-width:1320px}
+
+/* 10 system final */
+.system-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.system-block{padding:20px}
+.system-block-head{display:flex;gap:10px;align-items:center;margin-bottom:11px}
+.system-letter{
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:white;font-weight:950
+}
+.system-block h3{margin:0;font-size:1rem;letter-spacing:.05em}
+.system-q{padding:11px 0;border-top:1px solid #EEE8E0}
+.system-q:first-of-type{border-top:0}
+.system-q label{display:block;font-size:.79rem;font-weight:850;margin-bottom:5px}
+.system-q textarea{min-height:62px}
+.summary-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.system-summary-view{
+  margin-top:16px;padding:22px;background:white;border:1px solid var(--line);border-radius:18px;
+}
+.system-summary-view h3{margin:0 0 12px}
+.summary-group{margin-top:14px}
+.summary-group h4{margin:0 0 7px;color:var(--orange);font-size:.78rem;letter-spacing:.07em}
+.summary-line{padding:7px 0;border-top:1px solid #EEE8E0;font-size:.82rem}
+.summary-line b{display:block;margin-bottom:2px}
+
+/* 11 commitment */
+.commitment-shell{padding:24px}
+.commit-primary label{font-size:.92rem!important;color:var(--navy)!important}
+.commit-primary textarea{min-height:120px;font-size:1rem;border:2px solid #CFC6BC}
+.direct-warning{margin-top:12px}
+
+/* FINAL PANEL */
+.close-panel{padding:50px 0 64px;background:#101D35;color:white}
+.close-panel-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}
+.close-panel h2{font-size:clamp(34px,4vw,58px);letter-spacing:-.045em;line-height:.95;text-transform:uppercase;margin:0}
+.close-panel p{margin:8px 0 0;color:#C9D2DF}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.status-card{
+  padding:17px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.055)
+}
+.status-card span{display:block;color:#AFC0D5;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:850}
+.status-card strong{display:block;margin-top:6px;font-size:1.15rem}
+.status-good{color:#8FDBB9}
+.status-warn{color:#FFD0B9}
+
+/* BOTTOM ACTIONS */
+.bottom-bar{
+  position:sticky;bottom:0;z-index:90;background:rgba(245,243,238,.96);
+  backdrop-filter:blur(14px);border-top:1px solid rgba(20,33,61,.10);
+}
+.bottom-row{
+  width:min(calc(100% - 80px),var(--max));margin:0 auto;min-height:62px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.bottom-left,.bottom-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.file-input{display:none}
+
+/* Print */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  @page{size:auto;margin:11mm}
+  body{background:white!important;font-size:11px}
+  .app-header,.bottom-bar,.no-print,.table-actions,.priority-toolbar,.summary-actions,.btn,.icon-btn{display:none!important}
+  .container{width:100%;max-width:none}
+  .tool-hero{padding:0 0 12mm}
+  .work-section{padding:10mm 0;break-before:auto}
+  .work-section.soft,.work-section.white{background:white!important}
+  .section-head{grid-template-columns:48px 1fr;margin-bottom:12px}
+  .section-index{width:42px;height:42px}
+  .section-status{display:none}
+  .section-title{font-size:24px}
+  .card,.validation-card,.quality-item,.priority-item,.system-block{box-shadow:none!important;break-inside:avoid}
+  .known-grid,.legend-3,.auto-grid,.audit-groups,.system-grid,.status-grid{grid-template-columns:1fr 1fr;gap:10px}
+  input,select,textarea{
+    border:0!important;background:transparent!important;box-shadow:none!important;padding:2px!important;color:#111!important;
+  }
+  textarea{resize:none;overflow:visible;min-height:20px}
+  .table-wrap{overflow:visible;border-color:#bbb}
+  table{min-width:0!important;font-size:8px}
+  th{position:static!important;padding:5px 4px}
+  td{padding:4px}
+  .row-actions{display:none}
+  .quality-fix.hidden,.direct-warning.hidden{display:none!important}
+  .close-panel{background:white!important;color:var(--navy)!important;padding:10mm 0}
+  .close-panel p{color:var(--gray)}
+  .status-card{border-color:#ccc;background:white!important}
+  .status-card span{color:var(--gray)}
+  .status-good,.status-warn{color:var(--navy)}
+  .page-break-avoid{break-inside:avoid}
+}
+
+/* Responsive */
+@media(max-width:1180px){
+  .header-center{display:none}
+  .auto-grid{grid-template-columns:1fr}
+  .tool-hero-grid{grid-template-columns:1fr}
+  .hero-panel{justify-self:start;max-width:560px}
+}
+@media(max-width:900px){
+  .container{width:min(calc(100% - 28px),var(--max))}
+  .tool-hero-grid,.known-grid,.audit-groups,.system-grid{grid-template-columns:1fr}
+  .legend-3{grid-template-columns:1fr}
+  .header-actions .btn-ghost{display:none}
+  .save-state{display:none}
+  .anchor-nav{max-width:none}
+  .section-head{grid-template-columns:58px 1fr}
+  .section-status{grid-column:2}
+  .quality-row{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr 1fr}
+  .priority-item textarea,.priority-item input,.priority-item select{min-width:0}
+}
+@media(max-width:620px){
+  .header-main{align-items:flex-start;padding:10px 0;min-height:0}
+  .brand-line{min-width:0}
+  .brand-sub{display:none}
+  .header-actions{gap:4px}
+  .header-actions .btn{padding:7px 8px;font-size:.68rem}
+  .progress-row{height:42px}
+  .anchor-nav{display:none}
+  .tool-hero{padding-top:36px}
+  .tool-title{font-size:clamp(40px,13vw,62px)}
+  .field-row{grid-template-columns:1fr}
+  .validation-top{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr}
+  .section-head{grid-template-columns:46px 1fr;gap:12px}
+  .section-index{width:42px;height:42px}
+  .move-stack{flex-direction:column}
+  .bottom-row{padding:8px 0;align-items:flex-start;flex-direction:column}
+}
+
+/* ==========================================================
+   QA FUNCIONAL FINAL · EXTENSIONES DE EVIDENCIA
+   ========================================================== */
+.known-grid-single{grid-template-columns:1fr}
+.validation-wide{margin-top:20px;padding:24px}
+.base-session-shell{margin-top:20px;padding:24px}
+.base-session-head{
+  display:flex;justify-content:space-between;gap:20px;align-items:center;
+  padding-bottom:18px;border-bottom:1px solid var(--line);
+}
+.base-session-head h3{margin:5px 0 0;font-size:1.25rem;letter-spacing:-.02em}
+.base-reviewed{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 12px;border-radius:999px;background:#F2EEE8;
+  font-size:.68rem;font-weight:900;letter-spacing:.06em;color:var(--gray);
+  white-space:nowrap;
+}
+.base-session-grid{
+  margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px
+}
+.base-module{
+  padding:18px;border-radius:17px;background:#FBFAF8;border:1px solid var(--line)
+}
+.base-module.wide{grid-column:1/-1}
+.base-module h4{margin:0 0 12px;font-size:.88rem;letter-spacing:.07em;color:var(--orange)}
+.base-module textarea{min-height:92px}
+.base-module .field-stack{gap:10px}
+
+.hah-detail-btn{
+  margin-top:7px;padding:5px 8px;border:1px solid #D9D0C7;border-radius:8px;
+  background:white;color:var(--orange);font-size:.61rem;font-weight:950;letter-spacing:.06em;
+}
+.hah-detail-row td{padding:0;background:#FCFAF7}
+.hah-detail-panel{
+  padding:16px 18px 18px;border-left:4px solid var(--orange);
+}
+.hah-detail-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;
+}
+.hah-detail-grid textarea{min-height:66px;border:1px solid #DED7CE;background:white}
+
+#pipelineTable{min-width:1270px}
+
+.priority-item{
+  grid-template-columns:64px minmax(170px,1.25fr) 105px 105px 105px minmax(150px,1fr);
+  grid-template-areas:
+    "badge action priority impact effort why"
+    "moves dependency confidence owner evidence why";
+  gap:9px;
+}
+.priority-item .priority-badge{grid-area:badge}
+.priority-item .priority-action{grid-area:action}
+.priority-item .priority-priority{grid-area:priority}
+.priority-item .priority-impact{grid-area:impact}
+.priority-item .priority-effort{grid-area:effort}
+.priority-item .priority-why{grid-area:why;min-height:96px}
+.priority-item .priority-confidence{grid-area:confidence}
+.priority-item .priority-dependency{grid-area:dependency}
+.priority-item .priority-owner{grid-area:owner}
+.priority-item .priority-evidence{grid-area:evidence}
+.priority-item .move-stack{grid-area:moves}
+.priority-field label{
+  display:block;margin-bottom:4px;font-size:.55rem;font-weight:900;
+  letter-spacing:.06em;text-transform:uppercase;color:#7B8494
+}
+
+.followup-shell{margin-top:20px;padding:22px}
+.followup-head{
+  display:flex;justify-content:space-between;gap:20px;align-items:end;
+  padding-bottom:16px;border-bottom:1px solid var(--line)
+}
+.followup-head h3{margin:5px 0 0;font-size:1.22rem}
+.followup-date{width:min(300px,100%)}
+.followup-list{display:grid;gap:10px;margin-top:15px}
+.followup-item{
+  padding:15px;border:1px solid var(--line);border-radius:15px;background:#FBFAF8;
+  display:grid;grid-template-columns:42px repeat(5,minmax(0,1fr)) 38px;gap:8px;align-items:start
+}
+.followup-num{
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:var(--navy);color:white;font-size:.68rem;font-weight:950
+}
+.followup-item textarea{min-height:66px}
+.followup-field label{
+  display:block;margin-bottom:4px;font-size:.54rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#7B8494
+}
+.followup-empty{
+  margin-top:15px;padding:15px;border:1px dashed #CFC7BD;border-radius:14px;color:var(--gray)
+}
+
+.session-register{padding:44px 0;background:#EEE8E1;border-top:1px solid var(--line)}
+.session-register-head{
+  display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:18px
+}
+.session-register-head h2{
+  margin:5px 0 0;font-size:clamp(30px,3vw,46px);line-height:.95;letter-spacing:-.04em
+}
+.session-register-head p{margin:8px 0 0;color:var(--gray)}
+.session-log-list{display:grid;gap:9px}
+.session-log-item{
+  display:grid;grid-template-columns:90px 100px minmax(0,1fr) 175px 70px 84px;
+  gap:10px;align-items:center;padding:13px 14px;background:white;border:1px solid var(--line);
+  border-radius:14px
+}
+.log-type,.log-priority{
+  font-size:.62rem;font-weight:950;letter-spacing:.06em;text-transform:uppercase
+}
+.log-type{color:var(--orange)}
+.log-note{font-weight:760}
+.log-destination{font-size:.72rem;color:var(--gray)}
+.log-time{font-size:.7rem;color:var(--gray)}
+.log-actions{display:flex;gap:5px}
+.session-log-empty{padding:17px;border:1px dashed #BDB4AA;border-radius:14px;color:var(--gray);background:rgba(255,255,255,.45)}
+
+.floating-register{
+  position:fixed;right:22px;bottom:82px;z-index:95;
+  border:0;border-radius:999px;background:var(--orange);color:white;
+  padding:12px 16px;font-weight:950;font-size:.72rem;letter-spacing:.05em;
+  box-shadow:0 14px 34px rgba(216,115,72,.28)
+}
+.modal-backdrop{
+  position:fixed;inset:0;z-index:200;background:rgba(12,22,40,.62);
+  display:grid;place-items:center;padding:20px
+}
+.modal-card{
+  width:min(620px,100%);max-height:90vh;overflow:auto;
+  background:var(--cream);border-radius:24px;box-shadow:0 28px 80px rgba(0,0,0,.3);padding:22px
+}
+.modal-head{display:flex;justify-content:space-between;gap:20px;align-items:start;margin-bottom:18px}
+.modal-head h3{margin:4px 0 0;font-size:1.45rem}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.modal-time{font-size:.73rem;color:var(--gray);text-align:right}
+
+.status-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+@media(max-width:1180px){
+  .container,
+  .header-main,
+  .progress-row,
+  .bottom-row{width:min(calc(100% - 48px),var(--max))}
+  .tool-hero-grid{grid-template-columns:1fr}
+  .hero-panel{justify-self:start;max-width:560px}
+  .base-session-grid{grid-template-columns:1fr}
+  .base-module.wide{grid-column:auto}
+  .hah-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .priority-item{
+    grid-template-columns:56px 1fr 110px 110px;
+    grid-template-areas:
+      "badge action priority confidence"
+      "moves impact effort dependency"
+      ". owner evidence why";
+  }
+  .followup-item{grid-template-columns:42px repeat(2,minmax(0,1fr));}
+  .followup-item .followup-delete{grid-column:1}
+  .session-log-item{grid-template-columns:90px 90px 1fr 150px 70px}
+  .log-actions{grid-column:5}
+}
+@media(max-width:900px){
+  .container,
+  .header-main,
+  .progress-row,
+  .bottom-row{width:min(calc(100% - 28px),var(--max))}
+  .base-session-head,.followup-head,.session-register-head{align-items:flex-start;flex-direction:column}
+  .hah-detail-grid{grid-template-columns:1fr}
+  .priority-item{
+    grid-template-columns:48px 1fr;
+    grid-template-areas:
+      "badge action"
+      "moves priority"
+      ". impact"
+      ". effort"
+      ". confidence"
+      ". dependency"
+      ". owner"
+      ". evidence"
+      ". why";
+  }
+  .followup-item{grid-template-columns:40px 1fr}
+  .followup-field{grid-column:2}
+  .session-log-item{
+    grid-template-columns:80px 80px 1fr;
+  }
+  .log-destination,.log-time,.log-actions{grid-column:3}
+  .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .floating-register{right:12px;bottom:118px;padding:10px 12px}
+  .session-log-item{grid-template-columns:1fr}
+  .log-destination,.log-time,.log-actions{grid-column:auto}
+  .status-grid{grid-template-columns:1fr}
+}
+
+@media print{
+  .floating-register,.modal-backdrop{display:none!important}
+  .base-reviewed{border:1px solid #ccc;background:white}
+  .hah-detail-row{display:table-row!important}
+  .session-register{background:white!important}
+  .session-log-item{break-inside:avoid}
+  .followup-item{break-inside:avoid}
+}
+
+
+/* ==========================================================
+   MASTER DE EVIDENCIA · EXTENSIONES SIN REDISEÑO
+   ========================================================== */
+.deliverable-detail{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
+.deliverable-detail-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:16px}
+.deliverable-detail-head h3{margin:5px 0 0;font-size:1.22rem}
+.evidence-tool{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#FBFAF8}
+.evidence-tool-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:12px}
+.evidence-tool-head h4{margin:8px 0 0;font-size:.9rem;color:var(--navy)}
+.observed-warning{padding:8px 11px;border-radius:999px;background:var(--navy);color:white;font-size:.64rem;font-weight:950;letter-spacing:.08em;white-space:nowrap}
+.evidence-table{min-width:1450px}
+.evidence-table th{top:120px}
+.evidence-table td:first-child{font-weight:950;color:var(--orange);text-align:center;min-width:42px}
+.evidence-table textarea{min-height:62px}
+#funnelMetricsTable{min-width:1320px}
+#campaignChecklistTable{min-width:1180px}
+
+.diagnostic-shell{margin-bottom:20px;padding:20px}
+.diagnostic-head{display:flex;justify-content:space-between;gap:18px;align-items:end;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.diagnostic-head h3{margin:5px 0 0;font-size:1.22rem}
+.diagnostic-head p{margin:7px 0 0;color:var(--gray);font-size:.8rem}
+.diagnostic-list{display:grid;gap:10px;margin-top:14px}
+.diagnostic-empty{padding:15px;border:1px dashed #C7BDB2;border-radius:14px;color:var(--gray);background:#FFFDFB}
+.diagnostic-item{display:grid;grid-template-columns:44px repeat(2,minmax(0,1fr)) 120px 120px 38px;gap:9px;padding:13px;border:1px solid var(--line);border-radius:15px;background:white;align-items:start}
+.diagnostic-num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:white;font-size:.68rem;font-weight:950}
+.diagnostic-field label{display:block;margin-bottom:4px;font-size:.54rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#7B8494}
+.diagnostic-field textarea{min-height:65px}
+.diagnostic-field.wide{grid-column:span 2}
+.diagnostic-priority,.diagnostic-status{align-self:start}
+
+@media(max-width:1180px){
+  .deliverable-detail-head,.evidence-tool-head,.diagnostic-head{align-items:flex-start;flex-direction:column}
+  .diagnostic-item{grid-template-columns:44px 1fr 1fr}
+  .diagnostic-field.wide{grid-column:span 2}
+  .diagnostic-priority,.diagnostic-status{grid-column:auto}
+}
+@media(max-width:760px){
+  .diagnostic-item{grid-template-columns:38px 1fr}
+  .diagnostic-field,.diagnostic-field.wide,.diagnostic-priority,.diagnostic-status{grid-column:2}
+}
+@media print{
+  .deliverable-detail{break-inside:auto}
+  .evidence-tool,.diagnostic-shell,.diagnostic-item{break-inside:avoid}
+  .evidence-table{min-width:0!important;font-size:7px}
+  .evidence-table th,.evidence-table td{font-size:7px;padding:3px}
+  .observed-warning{border:1px solid #aaa;background:white!important;color:var(--navy)!important}
+}
+
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-main">
+    <div class="brand-line">
+      <span class="brand-dot"></span>
+      <div>
+        <div class="brand-title">ARQCOES · SESIÓN 2</div>
+        <div class="brand-sub">Laboratorio de decisiones</div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <strong>Ulises · Diseñar e implementar</strong>
+      <span>Centro de trabajo en vivo</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="save-state" id="saveState"><i></i><span>Guardado automáticamente ✓</span></div>
+      <button class="btn btn-primary" id="saveBtn">Guardar</button>
+      <button class="btn btn-ghost" id="downloadBtn">Descargar resultados</button>
+      <button class="btn btn-ghost" onclick="window.print()">Imprimir / PDF</button>
+      <button class="btn btn-ghost" onclick="window.scrollTo({top:0,behavior:'smooth'})">Volver arriba</button>
+    </div>
+  </div>
+
+  <div class="progress-shell">
+    <div class="progress-row">
+      <div class="progress-count" id="progressCount">1 / 11</div>
+      <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      <nav class="anchor-nav" id="anchorNav">
+        <a href="#s1">1. Punto de partida</a>
+        <a href="#s2">2. H / A / H</a>
+        <a href="#s3">3. Automatizaciones</a>
+        <a href="#s4">4. HubSpot</a>
+        <a href="#s5">5. Pipeline</a>
+        <a href="#s6">6. TO-BE</a>
+        <a href="#s7">7. Calidad</a>
+        <a href="#s8">8. Prioridades</a>
+        <a href="#s9">9. Roadmap</a>
+        <a href="#s10">10. Sistema final</a>
+        <a href="#s11">11. Compromiso</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="tool-hero">
+  <div class="container tool-hero-grid">
+    <div>
+      <div class="eyebrow">ARQCOES · SESIÓN 2</div>
+      <h1 class="tool-title">LABORATORIO<br><span>DE DECISIONES</span></h1>
+      <p class="tool-lead">Validamos evidencia, diseñamos el sistema futuro y conservamos cada decisión tomada con Ulises en un solo centro de trabajo.</p>
+    </div>
+    <aside class="hero-panel card">
+      <div class="smallcaps orange">Trabajo local · sin servidor</div>
+      <div class="big">Todo queda guardado en este navegador.</div>
+      <p id="lastSavedHero">Último guardado: —</p>
+    </aside>
+  </div>
+</section>
+
+<!-- 01 -->
+<section class="work-section white" id="s1" data-section="1">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">01</div>
+      <div>
+        <h2 class="section-title">CONFIRMAMOS ANTES DE DISEÑAR</h2>
+        <p class="section-sub">Separar lo que ya sabemos de lo que todavía necesita corrección, confirmación o evidencia.</p>
+      </div>
+      <div class="section-status" id="status-s1">En proceso</div>
+    </div>
+
+    <div class="known-grid known-grid-single">
+      <article class="known-box card dark">
+        <div class="pill" style="background:rgba(255,255,255,.12);color:#fff">Ya sabemos</div>
+        <div class="known-list">
+          <div class="known-item"><span class="known-dot"></span><span>El seguimiento del flujo sigue siendo uno de los principales pesos operativos.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>La calificación actual es manual.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>Después de Messenger se solicita teléfono.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>Cuando se obtiene, se registra el contacto en HubSpot.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>Algunos contactos sin teléfono pueden quedar fuera.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>La cita se reserva para prospectos suficientemente calificados.</span></div>
+          <div class="known-item"><span class="known-dot"></span><span>Existe seguimiento posterior a cita.</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="base-session-shell card">
+      <div class="base-session-head">
+        <div>
+          <div class="eyebrow">BASE HEREDADA · SESIÓN 1</div>
+          <h3>Fuente de evidencia para los entregables posteriores</h3>
+        </div>
+        <label class="base-reviewed">
+          <input type="checkbox" id="baseReviewed">
+          <span>BASE REVISADA EN VIVO</span>
+        </label>
+      </div>
+      <div class="base-session-grid" id="baseSessionGrid"></div>
+
+      <div class="deliverable-detail">
+        <div class="deliverable-detail-head">
+          <div>
+            <div class="eyebrow">DETALLE PARA ENTREGABLES</div>
+            <h3>EVIDENCIA ESTRUCTURADA · SESIÓN 1</h3>
+          </div>
+          <div class="muted">AS-IS → Funnel / métricas → Meta Ads</div>
+        </div>
+
+        <div class="evidence-tool">
+          <div class="evidence-tool-head">
+            <div>
+              <span class="pill">A · AS-IS DETALLADO</span>
+              <h4>Secuencia actual con responsable, herramienta, riesgo y evidencia.</h4>
+            </div>
+            <button class="btn btn-primary no-print" data-action="add-asis">+ Agregar paso AS-IS</button>
+          </div>
+          <div class="table-wrap">
+            <table class="evidence-table" id="asisDetailedTable">
+              <thead><tr><th>#</th><th>Momento actual</th><th>Qué ocurre hoy</th><th>Responsable</th><th>Herramienta</th><th>Información / dato</th><th>Falla o riesgo</th><th>Evidencia</th><th>Pendiente</th><th class="no-print">Acción</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="evidence-tool">
+          <div class="evidence-tool-head">
+            <div>
+              <span class="pill">B · FUNNEL / MÉTRICAS DETALLADO</span>
+              <h4>Definiciones, dato actual, fuente, responsable y frecuencia.</h4>
+            </div>
+            <div class="observed-warning">CORTE OBSERVADO · NO BENCHMARK</div>
+          </div>
+          <div class="table-wrap">
+            <table class="evidence-table" id="funnelMetricsTable">
+              <thead><tr><th>Etapa / métrica</th><th>Definición acordada</th><th>Dato actual</th><th>Fuente</th><th>Responsable de revisar</th><th>Frecuencia</th><th>¿Disponible hoy?</th><th>Pendiente</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="evidence-tool">
+          <div class="evidence-tool-head">
+            <div>
+              <span class="pill">C · META ADS · CHECKLIST DE EVIDENCIA</span>
+              <h4>Separar evidencia, hipótesis, test y decisión sin mezclar categorías.</h4>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="evidence-table" id="campaignChecklistTable">
+              <thead><tr><th>Elemento</th><th>Qué observamos</th><th>Evidencia</th><th>Clasificación</th><th>Decisión</th><th>Qué falta validar</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="known-box card validation-wide">
+      <div class="pill">Validar hoy</div>
+      <div class="validation-list" id="validationList"></div>
+    </article>
+
+    <div class="recap-change card">
+      <label class="field-label" for="recapChange">¿Qué cambió respecto a lo que entendimos en Sesión 1?</label>
+      <textarea id="recapChange" data-key="recapChange" placeholder="Registrar únicamente correcciones, nuevas confirmaciones o pendientes que afecten el diseño."></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="work-section" id="s2" data-section="2">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">02</div>
+      <div>
+        <h2 class="section-title">¿QUÉ DEBE HACER EL SISTEMA Y QUÉ DEBE HACER UNA PERSONA?</h2>
+        <p class="section-sub">Clasificamos cada momento sin asumir la solución antes de discutirla.</p>
+      </div>
+      <div class="section-status" id="status-s2">En proceso</div>
+    </div>
+
+    <div class="legend-3">
+      <div class="legend-card dark"><b>HUMANO</b><span>Requiere criterio, contexto o conversación.</span></div>
+      <div class="legend-card"><b>AUTOMÁTICO</b><span>Requiere velocidad, consistencia o repetición.</span></div>
+      <div class="legend-card soft"><b>HÍBRIDO</b><span>Sistema prepara / detecta; persona decide / conversa.</span></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="hahTable">
+        <thead><tr><th>Momento</th><th>Hoy</th><th>Futuro</th><th>¿Por qué?</th><th>Responsable</th><th>Pendiente</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="work-section white" id="s3" data-section="3">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">03</div>
+      <div>
+        <h2 class="section-title">NO DISEÑAMOS 16 AUTOMATIZACIONES</h2>
+        <p class="section-sub">Elegimos solo 1–3 candidatas prioritarias.</p>
+      </div>
+      <div class="section-status" id="status-s3">0 / 3</div>
+    </div>
+    <div class="auto-grid" id="automationGrid"></div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="work-section soft" id="s4" data-section="4">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">04</div>
+      <div>
+        <h2 class="section-title">NO MEMORIA. EVIDENCIA REAL.</h2>
+        <p class="section-sub">Auditoría rápida de HubSpot para separar capacidades reales de supuestos.</p>
+      </div>
+      <div class="section-status" id="status-s4">Pendiente</div>
+    </div>
+
+    <div class="audit-banner">
+      <div class="timebox">TIMEBOX · 8–10 MIN</div>
+      <div class="muted">Si algo no se confirma rápido → PENDIENTE TÉCNICO.</div>
+    </div>
+    <div class="audit-groups" id="auditGroups"></div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="work-section white" id="s5" data-section="5">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">05</div>
+      <div>
+        <h2 class="section-title">UNA ETAPA EXISTE SOLO SI CAMBIA ALGO</h2>
+        <p class="section-sub">No prellenamos nombres definitivos. Diseñamos la arquitectura a nivel de proceso.</p>
+      </div>
+      <div class="section-status" id="status-s5">Pendiente</div>
+    </div>
+
+    <div class="rule-strip">
+      <div class="rule-word"><span>01</span><b>ACCIÓN</b></div>
+      <div class="rule-word"><span>02</span><b>INFORMACIÓN</b></div>
+      <div class="rule-word"><span>03</span><b>CONDICIÓN</b></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="pipelineTable">
+        <thead><tr><th>Etapa / estado</th><th>Entrada</th><th>Información mínima</th><th>Responsable</th><th>Siguiente paso</th><th>Condición de salida</th><th>Métrica / indicador</th><th>Tipo</th><th class="no-print">Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-actions no-print"><button class="btn btn-primary" data-action="add-pipeline">+ Agregar fila</button></div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="work-section navy" id="s6" data-section="6">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">06</div>
+      <div>
+        <h2 class="section-title">ASÍ DEBE VIAJAR EL PROSPECTO</h2>
+        <p class="section-sub">Builder del TO-BE. Cada paso debe quedar conectado con trigger, responsable, dato, excepción y métrica.</p>
+      </div>
+      <div class="section-status" id="status-s6">Pendiente</div>
+    </div>
+
+    <div id="tobeGroups"></div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="work-section white" id="s7" data-section="7">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">07</div>
+      <div>
+        <h2 class="section-title">¿EL SISTEMA TODAVÍA TIENE FUGAS?</h2>
+        <p class="section-sub">Marcamos evidencia de diseño completo y documentamos lo que todavía debe corregirse.</p>
+      </div>
+      <div class="section-status" id="status-s7">Pendiente</div>
+    </div>
+
+    <div class="quality-list" id="qualityList"></div>
+    <div class="leak-summary card">
+      <div class="smallcaps orange">Fugas que todavía quedan abiertas</div>
+      <div id="leakSummaryText" class="muted" style="margin-top:7px">Ninguna respuesta registrada todavía.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="work-section soft" id="s8" data-section="8">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">08</div>
+      <div>
+        <h2 class="section-title">NO TODO VA PRIMERO</h2>
+        <p class="section-sub">Convertimos hallazgos y decisiones en acciones priorizables sin tratar hipótesis como verdades.</p>
+      </div>
+      <div class="section-status" id="status-s8">0 elementos</div>
+    </div>
+
+    <div class="diagnostic-shell card">
+      <div class="diagnostic-head">
+        <div>
+          <div class="eyebrow">SÍNTESIS DIAGNÓSTICA</div>
+          <h3>3–5 HALLAZGOS PRIORITARIOS</h3>
+          <p>Hallazgo → implicación → decisión → acción. Las hipótesis permanecen explícitamente separadas de las decisiones.</p>
+        </div>
+        <button class="btn btn-primary no-print" data-action="add-diagnostic">+ Agregar hallazgo</button>
+      </div>
+      <div id="diagnosticFindingsList" class="diagnostic-list"></div>
+    </div>
+
+    <div class="priority-toolbar no-print">
+      <div class="muted">P0 = crítico · P1 = alto impacto · P2 = optimización · P3 = experimento</div>
+      <button class="btn btn-primary" data-action="add-priority">+ Agregar acción / problema</button>
+    </div>
+    <div class="priority-list" id="priorityList"></div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="work-section white" id="s9" data-section="9">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">09</div>
+      <div>
+        <h2 class="section-title">DEL DISEÑO A LA EJECUCIÓN</h2>
+        <p class="section-sub">Roadmap de 5–7 acciones si la evidencia lo justifica. No es obligatorio completar siete.</p>
+      </div>
+      <div class="section-status" id="status-s9">0 acciones</div>
+    </div>
+
+    <div class="road-note">
+      <div class="road-count" id="roadCount">0 / 7</div>
+      <button class="btn btn-primary no-print" data-action="add-roadmap">+ Agregar acción</button>
+    </div>
+    <div class="table-wrap">
+      <table id="roadmapTable">
+        <thead><tr><th>#</th><th>Acción</th><th>Prioridad</th><th>Problema que resuelve</th><th>Responsable</th><th>Dependencia</th><th>Cuándo</th><th>Métrica / evidencia</th><th>Estado</th><th class="no-print">Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="work-section" id="s10" data-section="10">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">10</div>
+      <div>
+        <h2 class="section-title">¿PUEDES EXPLICAR EL SISTEMA COMPLETO?</h2>
+        <p class="section-sub">Síntesis ejecutiva del sistema diseñado. El resumen se genera solo con lo que escribamos aquí.</p>
+      </div>
+      <div class="section-status" id="status-s10">Pendiente</div>
+    </div>
+
+    <div class="system-grid" id="systemGrid"></div>
+    <div class="summary-actions no-print">
+      <button class="btn btn-orange" id="generateSummaryBtn">GENERAR RESUMEN DEL SISTEMA</button>
+    </div>
+    <div class="system-summary-view hidden" id="systemSummaryView"></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="work-section white" id="s11" data-section="11">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-index">11</div>
+      <div>
+        <h2 class="section-title">UNA SOLA ACCIÓN QUE SÍ VAS A EJECUTAR</h2>
+        <p class="section-sub">Primer compromiso verificable. No equivale a todo el roadmap.</p>
+      </div>
+      <div class="section-status" id="status-s11">Pendiente</div>
+    </div>
+
+    <div class="commitment-shell card">
+      <div class="field-stack">
+        <div class="commit-primary">
+          <label class="field-label">Yo me comprometo a</label>
+          <textarea data-key="commit.action" placeholder="Una sola acción concreta."></textarea>
+        </div>
+        <div class="field-row">
+          <div><label class="field-label">Antes de</label><input type="text" data-key="commit.before" placeholder="Fecha o momento acordado"></div>
+          <div><label class="field-label">Porque resuelve</label><textarea data-key="commit.why"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div><label class="field-label">Sabremos que está hecho cuando</label><textarea data-key="commit.done"></textarea></div>
+          <div><label class="field-label">Evidencia</label><textarea data-key="commit.evidence"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div><label class="field-label">Dependencia</label><input type="text" data-key="commit.dependency"></div>
+          <div>
+            <label class="field-label">¿Está bajo control directo de Ulises?</label>
+            <select data-key="commit.directControl" id="directControlSelect">
+              <option value="">Seleccionar</option>
+              <option>SÍ</option>
+              <option>NO</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="notice direct-warning hidden" id="directWarning">Puede ser mejor elegir como compromiso obtener la evidencia o desbloquear la dependencia.</div>
+    </div>
+
+    <div class="followup-shell card">
+      <div class="followup-head">
+        <div>
+          <div class="eyebrow">SEGUIMIENTO · 45 MIN</div>
+          <h3>QUÉ REVISAREMOS EN EL SEGUIMIENTO</h3>
+        </div>
+        <div class="followup-date">
+          <label class="field-label">Fecha tentativa de seguimiento</label>
+          <input type="date" id="followupDate">
+        </div>
+      </div>
+      <div id="followupList"></div>
+      <div class="table-actions no-print">
+        <button class="btn btn-primary" data-action="add-followup">+ Agregar punto de seguimiento</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="session-register" id="registro-sesion">
+  <div class="container">
+    <div class="session-register-head">
+      <div>
+        <div class="eyebrow">CAPTURA TRANSVERSAL</div>
+        <h2>REGISTRO DE SESIÓN</h2>
+        <p>Decisiones, hallazgos, hipótesis, pendientes e implementación que surjan en vivo.</p>
+      </div>
+      <button class="btn btn-orange no-print" id="registerFindingBtn">+ REGISTRAR HALLAZGO</button>
+    </div>
+    <div id="sessionLogList" class="session-log-list"></div>
+  </div>
+</section>
+
+<button class="floating-register no-print" id="floatingRegisterBtn">+ REGISTRAR HALLAZGO</button>
+
+<div class="modal-backdrop hidden no-print" id="sessionLogModal" role="dialog" aria-modal="true" aria-labelledby="sessionLogModalTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">REGISTRO GLOBAL</div>
+        <h3 id="sessionLogModalTitle">REGISTRAR HALLAZGO</h3>
+      </div>
+      <button class="icon-btn" id="closeLogModal" aria-label="Cerrar">×</button>
+    </div>
+    <div class="field-stack">
+      <div class="field-row">
+        <div>
+          <label class="field-label">Tipo</label>
+          <select id="logType">
+            <option value="">Seleccionar</option>
+            <option>CONFIRMADO</option>
+            <option>HALLAZGO</option>
+            <option>DECISIÓN</option>
+            <option>HIPÓTESIS</option>
+            <option>PENDIENTE</option>
+            <option>IMPLEMENTACIÓN</option>
+            <option>SEGUIMIENTO</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Prioridad</label>
+          <select id="logPriority">
+            <option value="">Seleccionar</option>
+            <option>P0</option><option>P1</option><option>P2</option><option>P3</option><option>PENDIENTE</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Nota</label>
+        <textarea id="logNote" placeholder="Registrar el hallazgo o decisión tal como quedó en la sesión."></textarea>
+      </div>
+      <div>
+        <label class="field-label">Destino</label>
+        <select id="logDestination">
+          <option value="">Seleccionar</option>
+          <option>Diagnóstico</option>
+          <option>AS-IS</option>
+          <option>H/A/H</option>
+          <option>Funnel</option>
+          <option>Meta Ads / Checklist</option>
+          <option>Pipeline</option>
+          <option>TO-BE</option>
+          <option>Roadmap</option>
+          <option>Seguimiento</option>
+          <option>Interno</option>
+        </select>
+      </div>
+      <div class="modal-time">Hora: <strong id="logTimePreview">—</strong></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelLogBtn">Cancelar</button>
+      <button class="btn btn-primary" id="saveLogBtn">Guardar registro</button>
+    </div>
+  </div>
+</div>
+
+<section class="close-panel" id="estado-cierre">
+  <div class="container">
+    <div class="close-panel-head">
+      <div>
+        <div class="eyebrow" style="color:#FFA57C">SESIÓN 2 · ESTADO DE CIERRE</div>
+        <h2>¿QUÉ TAN CERRADO ESTÁ EL SISTEMA?</h2>
+        <p>Indicadores calculados a partir de lo capturado en esta herramienta.</p>
+      </div>
+      <div class="smallcaps" id="lastSavedClose">Último guardado: —</div>
+    </div>
+    <div class="status-grid" id="finalStatusGrid"></div>
+  </div>
+</section>
+</main>
+
+<footer class="bottom-bar no-print">
+  <div class="bottom-row">
+    <div class="bottom-left">
+      <button class="btn btn-primary" id="backupBtn">Descargar respaldo</button>
+      <button class="btn btn-ghost" id="resultsBtn">Descargar resultado legible</button>
+      <button class="btn btn-ghost" id="importBtn">Importar respaldo</button>
+      <input class="file-input" type="file" id="importFile" accept=".json,application/json">
+    </div>
+    <div class="bottom-right">
+      <span class="muted" id="lastSavedBottom">Último guardado: —</span>
+      <button class="btn btn-danger" id="clearBtn">Limpiar sesión</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+
+const STORE_KEY = 'arqcoes_sesion_2_ulises';
+const VERSION = '3.0';
+const HAH_MOMENTS = [
+  'Entrada desde Messenger',
+  'Captura de teléfono / datos',
+  'Primera respuesta',
+  'Preguntas de calificación',
+  'Decisión califica / no califica',
+  'Crear / actualizar contacto',
+  'Agendar cita',
+  'Recordatorio de cita',
+  'No-show',
+  'Seguimiento post-cita',
+  'No responde',
+  'No está listo',
+  'Reactivación',
+  'Cierre',
+  'Handoff',
+  'Postventa'
+];
+const VALIDATIONS = [
+  'Punto exacto de creación del contacto',
+  'Contactos que quedan fuera',
+  'Cadencia post-cita',
+  'Recordatorios / no-show',
+  'Estructura real de HubSpot',
+  'Handoff',
+  'Postventa'
+];
+const AUTO_FIELDS = ['name','problem','trigger','condition','action','result','exception','owner','tool','metric','status','priority'];
+
+
+const ASIS_DETAILED_DEFAULTS = [
+  'Entrada desde Messenger',
+  'Solicitud / captura de teléfono',
+  'Registro en HubSpot',
+  'Calificación',
+  'Cita',
+  'Seguimiento post-cita',
+  'Cierre / inicio de trámites',
+  'Handoff'
+].map((moment,i)=>({id:'asis_'+(i+1),moment,occurs:'',owner:'',tool:'',info:'',risk:'',evidence:'',pending:'',locked:true}));
+
+const FUNNEL_METRICS_DEFAULTS = [
+  {stage:'Lead',definition:'',current:'',source:'',reviewOwner:'',frequency:'',available:'',pending:''},
+  {stage:'Contactado',definition:'',current:'Dato disponible, pero no medido rutinariamente',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Calificado',definition:'',current:'6',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Cita',definition:'',current:'6',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Asistencia',definition:'',current:'6',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Oportunidad',definition:'',current:'5',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Venta',definition:'',current:'5',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'CPL',definition:'',current:'$65 MXN',source:'',reviewOwner:'',frequency:'',available:'SÍ',pending:''},
+  {stage:'Costo por venta',definition:'',current:'PENDIENTE',source:'',reviewOwner:'',frequency:'',available:'PENDIENTE',pending:''}
+];
+
+const CAMPAIGN_CHECKLIST_DEFAULTS = [
+  {element:'Objetivo',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Oferta',observed:'Claridad pendiente.',evidence:'',classification:'PENDIENTE',decision:'PENDIENTE',pending:''},
+  {element:'Señal / conversión',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Audiencia',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Creativo',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Video',observed:'Mejorar / priorizar.',evidence:'',classification:'DECISIÓN',decision:'CAMBIAR',pending:''},
+  {element:'Copy',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Gancho',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'CTA',observed:'',evidence:'',classification:'',decision:'',pending:''},
+  {element:'Destino',observed:'No cambiar por ahora.',evidence:'',classification:'DECISIÓN',decision:'NO CAMBIAR TODAVÍA',pending:''},
+  {element:'Messenger / conversación',observed:'Estructuración como posible test / validación.',evidence:'',classification:'TEST',decision:'VALIDAR',pending:''},
+  {element:'Seguimiento posterior',observed:'Flujo del cliente: mejorar / priorizar.',evidence:'',classification:'DECISIÓN',decision:'CAMBIAR',pending:''}
+];
+
+const BASE_SESSION1_DEFAULTS = {
+  asisSummary:'Messenger → solicitud de teléfono → registro en HubSpot cuando se obtiene el teléfono → calificación manual → cita para prospectos suficientemente calificados → seguimiento post-cita → cierre / inicio de trámites. El punto exacto de creación del contacto y el handoff posterior requieren validación en Sesión 2.',
+  leaks:'El seguimiento de todo el flujo sigue siendo uno de los principales pesos operativos. En Sesión 1 quedaron como focos el seguimiento de leads no calificados, el control de prospectos, los contactos de Messenger que pueden quedar fuera si no proporcionan teléfono y el seguimiento posterior a cita.',
+  metricsToday:'Corte registrado en Sesión 1: CPL $65 MXN; 6 calificados; 6 citas; 6 asistencias; 5 oportunidades; 5 ventas. Los contactados están disponibles, pero no se miden de forma habitual. Estos datos corresponden al corte conversado y no se tratan como benchmark.',
+  metricsMissing:'Costo por venta pendiente. También falta conectar y medir de forma consistente quién no sigue a cita y quién se queda en seguimiento.',
+  measurementGap:'No basta con revisar CPL; falta conectar el CPL con el avance real del prospecto a través del seguimiento y el funnel.',
+  metaObserved:'La oferta quedó pendiente por claridad; Messenger estructurado quedó como algo a validar/testear; mejorar video y flujo del cliente quedó en cambiar/priorizar; hubo optimización secundaria del anuncio, videos y flujo.',
+  metaKeep:'Destino: no cambiar por ahora.',
+  metaReview:'Oferta, video y flujo del cliente conforme a los hallazgos registrados en Sesión 1.',
+  metaValidate:'Messenger estructurado como posible test. Cualquier cambio debe validarse con evidencia.',
+  evidence:'Workbook y notas de Sesión 1 respaldan: seguimiento manual, calificación manual, solicitud de teléfono después de Messenger, registro en HubSpot al obtenerlo, citas reservadas para prospectos suficientemente calificados y seguimiento posterior a cita.',
+  hypotheses:'Validar/testear Messenger estructurado. No existe una decisión formal de migrar de CRM.',
+  decisions:'Mantener el destino por ahora. No convertir la conversación sobre otra plataforma/CRM en una decisión de migración.',
+  reviewed:false
+};
+
+const AUDIT = {
+  A: {
+    title:'REGISTRO',
+    fields:[
+      {id:'contactCreation',label:'¿Cuándo se crea el contacto?',type:'textarea'},
+      {id:'noPhone',label:'¿Qué sucede con quien no proporciona teléfono?',type:'textarea'},
+      {id:'currentProperties',label:'Propiedades actuales relevantes',type:'textarea'},
+      {id:'missingProperties',label:'Propiedades faltantes',type:'textarea'}
+    ]
+  },
+  B: {
+    title:'PIPELINE',
+    fields:[
+      {id:'currentPipeline',label:'Pipeline actual',type:'textarea'},
+      {id:'usedStages',label:'Etapas realmente usadas',type:'textarea'},
+      {id:'visibleNextStep',label:'¿Existe siguiente paso visible?',type:'select',options:['','SÍ','NO','PARCIAL']},
+      {id:'tasksExist',label:'¿Existen tareas?',type:'select',options:['','SÍ','NO','PARCIAL']}
+    ]
+  },
+  C: {
+    title:'RESPONSABILIDAD',
+    fields:[
+      {id:'owner',label:'¿Quién es owner?',type:'textarea'},
+      {id:'assignment',label:'¿Cómo se asigna?',type:'textarea'},
+      {id:'activity',label:'¿Qué actividad queda registrada?',type:'checks',options:['Messenger','llamadas','citas','notas','emails','otro']}
+    ]
+  },
+  D: {
+    title:'EXCEPCIONES',
+    fields:[
+      {id:'noResponse',label:'¿Cómo vemos “no responde”?',type:'textarea'},
+      {id:'notReady',label:'¿Cómo vemos “no está listo”?',type:'textarea'},
+      {id:'handoff',label:'¿Cómo ocurre el handoff?',type:'textarea'},
+      {id:'postSale',label:'¿Qué pasa en postventa?',type:'textarea'}
+    ]
+  }
+};
+
+const TOBE_GROUPS = ['ADQUISICIÓN','OPERACIÓN','COMERCIAL','CONTINUIDAD'];
+const QUALITY = [
+  {q:'¿Puede existir un prospecto sin dueño?', leakWhen:'SI'},
+  {q:'¿Puede existir un prospecto sin siguiente paso o fecha?', leakWhen:'SI'},
+  {q:'¿Existe ruta definida si no responde?', leakWhen:'NO'},
+  {q:'¿Existe ruta definida si no está listo?', leakWhen:'NO'},
+  {q:'¿Existe ruta definida después de la cita?', leakWhen:'NO'},
+  {q:'¿Sabemos cuándo termina el proceso comercial?', leakWhen:'NO'},
+  {q:'¿Está definido el handoff?', leakWhen:'NO'},
+  {q:'¿Está definida al menos la lógica de postventa?', leakWhen:'NO'},
+  {q:'¿Podemos medir avance?', leakWhen:'NO'},
+  {q:'¿Podemos identificar estancamiento?', leakWhen:'NO'}
+];
+
+const SYSTEM_GROUPS = [
+  {letter:'A',title:'ENTRADA Y CALIFICACIÓN',items:[
+    '¿De dónde entra?','¿Dónde queda registrado?','¿Qué datos mínimos necesitamos?','¿Cómo sabemos si califica?'
+  ]},
+  {letter:'B',title:'AVANCE',items:[
+    '¿Qué ocurre si califica?','¿Qué ocurre si no está listo?','¿Qué ocurre si no responde?','¿Cómo se agenda y controla la cita?'
+  ]},
+  {letter:'C',title:'CONVERSIÓN',items:[
+    '¿Qué ocurre después de la cita?','¿Cuándo se convierte en oportunidad / cierre?','¿Cómo ocurre el handoff?'
+  ]},
+  {letter:'D',title:'CONTROL',items:[
+    '¿Qué queda humano / automático / híbrido?','¿Qué empezamos a medir?','¿Cuál es la primera prioridad?'
+  ]}
+];
+
+function blankState(){
+  return {
+    meta:{version:VERSION,lastSaved:null},
+    fields:{},
+    baseSession1:{...BASE_SESSION1_DEFAULTS},
+    asisDetailed:ASIS_DETAILED_DEFAULTS.map(r=>({...r})),
+    funnelMetrics:FUNNEL_METRICS_DEFAULTS.map(r=>({...r})),
+    campaignChecklist:CAMPAIGN_CHECKLIST_DEFAULTS.map(r=>({...r})),
+    diagnosticFindings:[],
+    validations: VALIDATIONS.map(label => ({label,status:'',detail:''})),
+    hah: HAH_MOMENTS.map(moment => ({
+      moment,today:'',future:'',why:'',owner:'',pending:'',
+      detail:{trigger:'',condition:'',action:'',tool:'',objective:'',observation:''}
+    })),
+    automations:[0,1,2].map(()=>({name:'',problem:'',trigger:'',condition:'',action:'',result:'',exception:'',owner:'',tool:'',metric:'',status:'',priority:''})),
+    audit:{},
+    pipeline:[blankPipelineRow()],
+    tobe:Object.fromEntries(TOBE_GROUPS.map(g=>[g,[]])),
+    quality:QUALITY.map(x=>({question:x.q,answer:'',fix:''})),
+    priorities:[],
+    roadmap:[],
+    system:{},
+    summaryGenerated:false,
+    sessionLog:[],
+    followup:{date:'',items:[]}
+  };
+}
+function blankPipelineRow(){
+  return {stage:'',entry:'',info:'',owner:'',next:'',exit:'',metric:'',type:''};
+}
+function blankTobeRow(){
+  return {step:'',trigger:'',occurs:'',type:'',owner:'',tool:'',data:'',exit:'',metric:''};
+}
+function blankPriority(){
+  return {action:'',priority:'',why:'',confidence:'',impact:'',effort:'',dependency:'',owner:'',evidence:''};
+}
+function blankRoadmap(){
+  return {action:'',priority:'',problem:'',owner:'',dependency:'',when:'',evidence:'',status:''};
+}
+function blankFollowup(){
+  return {verify:'',evidence:'',metric:'',owner:'',baseline:''};
+}
+function blankAsisDetailed(){
+  return {id:'asis_'+Date.now()+'_'+Math.random().toString(36).slice(2),moment:'',occurs:'',owner:'',tool:'',info:'',risk:'',evidence:'',pending:'',locked:false};
+}
+function blankDiagnosticFinding(){
+  return {finding:'',evidence:'',implication:'',decision:'',missing:'',priority:'',status:''};
+}
+
+
+let state = blankState();
+let saveTimer = null;
+const hahDetailOpen = new Set();
+let logEditIndex = null;
+
+function safeParse(raw){
+  try{return JSON.parse(raw)}catch{return null}
+}
+function loadState(){
+  const raw = localStorage.getItem(STORE_KEY);
+  const parsed = raw ? safeParse(raw) : null;
+  if(parsed && parsed.meta && parsed.meta.version){
+    state = mergeState(blankState(), parsed);
+  }
+}
+function mergeState(base, incoming){
+  const merged = {...base, ...incoming};
+  merged.meta = {...base.meta, ...(incoming.meta||{})};
+  merged.fields = {...base.fields, ...(incoming.fields||{})};
+  merged.baseSession1 = {...base.baseSession1, ...(incoming.baseSession1||{})};
+  merged.asisDetailed = Array.isArray(incoming.asisDetailed) && incoming.asisDetailed.length
+    ? incoming.asisDetailed.map((r,i)=>({...blankAsisDetailed(),...r,locked:i<ASIS_DETAILED_DEFAULTS.length ? (r.locked!==false) : !!r.locked}))
+    : base.asisDetailed.map(r=>({...r}));
+  merged.funnelMetrics = Array.isArray(incoming.funnelMetrics) && incoming.funnelMetrics.length
+    ? base.funnelMetrics.map((d,i)=>({...d,...(incoming.funnelMetrics[i]||{})}))
+    : base.funnelMetrics.map(r=>({...r}));
+  merged.campaignChecklist = Array.isArray(incoming.campaignChecklist) && incoming.campaignChecklist.length
+    ? base.campaignChecklist.map((d,i)=>({...d,...(incoming.campaignChecklist[i]||{})}))
+    : base.campaignChecklist.map(r=>({...r}));
+  merged.diagnosticFindings = Array.isArray(incoming.diagnosticFindings)
+    ? incoming.diagnosticFindings.slice(0,5).map(r=>({...blankDiagnosticFinding(),...r}))
+    : [];
+
+  merged.validations = base.validations.map((d,i)=>({...d,...((incoming.validations||[])[i]||{})}));
+  merged.hah = base.hah.map((d,i)=>{
+    const inc=((incoming.hah||[])[i]||{});
+    return {...d,...inc,detail:{...d.detail,...(inc.detail||{})}};
+  });
+  merged.automations = base.automations.map((d,i)=>({...d,...((incoming.automations||[])[i]||{})}));
+  merged.audit = {...(incoming.audit||{})};
+
+  merged.pipeline = Array.isArray(incoming.pipeline) && incoming.pipeline.length
+    ? incoming.pipeline.map(r=>({...blankPipelineRow(),...r}))
+    : base.pipeline;
+
+  merged.tobe = {...base.tobe};
+  TOBE_GROUPS.forEach(g=>{
+    merged.tobe[g]=Array.isArray(incoming.tobe?.[g])
+      ? incoming.tobe[g].map(r=>({...blankTobeRow(),...r}))
+      : [];
+  });
+
+  merged.quality = base.quality.map((d,i)=>({...d,...((incoming.quality||[])[i]||{})}));
+  merged.priorities = Array.isArray(incoming.priorities)
+    ? incoming.priorities.map(r=>({...blankPriority(),...r}))
+    : [];
+  merged.roadmap = Array.isArray(incoming.roadmap)
+    ? incoming.roadmap.map(r=>({...blankRoadmap(),...r}))
+    : [];
+  merged.system = {...(incoming.system||{})};
+  merged.summaryGenerated = !!incoming.summaryGenerated;
+
+  merged.sessionLog = Array.isArray(incoming.sessionLog)
+    ? incoming.sessionLog.map(r=>({
+        id:r.id||('log_'+Date.now()+'_'+Math.random().toString(36).slice(2)),
+        type:r.type||'',note:r.note||'',priority:r.priority||'',destination:r.destination||'',time:r.time||''
+      }))
+    : [];
+
+  merged.followup = {
+    date:incoming.followup?.date||'',
+    items:Array.isArray(incoming.followup?.items)
+      ? incoming.followup.items.slice(0,5).map(r=>({...blankFollowup(),...r}))
+      : []
+  };
+  return merged;
+}
+function nowTime(){
+  return new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>saveState(false),260);
+}
+function saveState(manual=false){
+  collectStaticFields();
+  state.meta.lastSaved = new Date().toISOString();
+  state.meta.version = VERSION;
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    updateSavedUI(manual);
+  }catch(err){
+    alert('No fue posible guardar en este navegador. Descarga un respaldo antes de continuar.');
+  }
+  updateFinalStatus();
+}
+function updateSavedUI(manual=false){
+  const time = state.meta.lastSaved ? new Date(state.meta.lastSaved).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}) : '—';
+  document.getElementById('lastSavedHero').textContent = 'Último guardado: '+time;
+  document.getElementById('lastSavedBottom').textContent = 'Último guardado: '+time;
+  document.getElementById('lastSavedClose').textContent = 'Último guardado: '+time;
+  const s = document.getElementById('saveState');
+  s.querySelector('span').textContent = manual ? 'Guardado ahora ✓' : 'Guardado automáticamente ✓';
+  if(manual) setTimeout(()=>{s.querySelector('span').textContent='Guardado automáticamente ✓'},1100);
+}
+function collectStaticFields(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key=el.dataset.key;
+    if(el.type==='checkbox') state.fields[key]=el.checked;
+    else state.fields[key]=el.value;
+  });
+}
+function restoreStaticFields(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key=el.dataset.key;
+    if(Object.prototype.hasOwnProperty.call(state.fields,key)){
+      if(el.type==='checkbox') el.checked=!!state.fields[key];
+      else el.value=state.fields[key] ?? '';
+    }
+  });
+  updateDirectWarning();
+}
+function escapeHtml(v){
+  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function optionHtml(options, selected){
+  return options.map(o=>`<option value="${escapeHtml(o)}"${o===selected?' selected':''}>${escapeHtml(o||'Seleccionar')}</option>`).join('');
+}
+function nonEmpty(v){return String(v??'').trim().length>0}
+function rowHasData(row, ignore=[]){
+  return Object.entries(row).some(([k,v])=>!ignore.includes(k) && nonEmpty(v));
+}
+
+/* 01 */
+
+
+function renderAsisDetailed(){
+  const tbody=document.querySelector('#asisDetailedTable tbody');
+  tbody.innerHTML=state.asisDetailed.map((r,i)=>`
+    <tr>
+      <td>${String(i+1).padStart(2,'0')}</td>
+      <td><input type="text" data-asis="${i}" data-asfield="moment" value="${escapeHtml(r.moment)}"></td>
+      <td><textarea data-asis="${i}" data-asfield="occurs">${escapeHtml(r.occurs)}</textarea></td>
+      <td><input type="text" data-asis="${i}" data-asfield="owner" value="${escapeHtml(r.owner)}" placeholder="PENDIENTE si no se confirma"></td>
+      <td><input type="text" data-asis="${i}" data-asfield="tool" value="${escapeHtml(r.tool)}" placeholder="PENDIENTE si no se confirma"></td>
+      <td><textarea data-asis="${i}" data-asfield="info">${escapeHtml(r.info)}</textarea></td>
+      <td><textarea data-asis="${i}" data-asfield="risk" placeholder="PENDIENTE si no se confirma">${escapeHtml(r.risk)}</textarea></td>
+      <td><textarea data-asis="${i}" data-asfield="evidence" placeholder="PENDIENTE si no se confirma">${escapeHtml(r.evidence)}</textarea></td>
+      <td><textarea data-asis="${i}" data-asfield="pending">${escapeHtml(r.pending)}</textarea></td>
+      <td class="no-print">${r.locked?'':`<button class="icon-btn" data-action="delete-asis" data-index="${i}">×</button>`}</td>
+    </tr>`).join('');
+}
+
+function renderFunnelMetrics(){
+  const tbody=document.querySelector('#funnelMetricsTable tbody');
+  tbody.innerHTML=state.funnelMetrics.map((r,i)=>`
+    <tr>
+      <td style="text-align:left;color:var(--navy)"><input type="text" data-funnel="${i}" data-ffield="stage" value="${escapeHtml(r.stage)}"></td>
+      <td><textarea data-funnel="${i}" data-ffield="definition">${escapeHtml(r.definition)}</textarea></td>
+      <td><input type="text" data-funnel="${i}" data-ffield="current" value="${escapeHtml(r.current)}"></td>
+      <td><textarea data-funnel="${i}" data-ffield="source">${escapeHtml(r.source)}</textarea></td>
+      <td><input type="text" data-funnel="${i}" data-ffield="reviewOwner" value="${escapeHtml(r.reviewOwner)}"></td>
+      <td><input type="text" data-funnel="${i}" data-ffield="frequency" value="${escapeHtml(r.frequency)}"></td>
+      <td><select data-funnel="${i}" data-ffield="available">${optionHtml(['','SÍ','NO','PARCIAL','PENDIENTE'],r.available)}</select></td>
+      <td><textarea data-funnel="${i}" data-ffield="pending">${escapeHtml(r.pending)}</textarea></td>
+    </tr>`).join('');
+}
+
+function renderCampaignChecklist(){
+  const tbody=document.querySelector('#campaignChecklistTable tbody');
+  const classifications=['','EVIDENCIA','HIPÓTESIS','TEST','DECISIÓN','PENDIENTE'];
+  const decisions=['','CONSERVAR','CAMBIAR','VALIDAR','TESTEAR','NO CAMBIAR TODAVÍA','OPTIMIZACIÓN SECUNDARIA','PENDIENTE'];
+  tbody.innerHTML=state.campaignChecklist.map((r,i)=>`
+    <tr>
+      <td style="text-align:left;color:var(--navy)"><input type="text" data-campaign="${i}" data-cfield="element" value="${escapeHtml(r.element)}"></td>
+      <td><textarea data-campaign="${i}" data-cfield="observed">${escapeHtml(r.observed)}</textarea></td>
+      <td><textarea data-campaign="${i}" data-cfield="evidence">${escapeHtml(r.evidence)}</textarea></td>
+      <td><select data-campaign="${i}" data-cfield="classification">${optionHtml(classifications,r.classification)}</select></td>
+      <td><select data-campaign="${i}" data-cfield="decision">${optionHtml(decisions,r.decision)}</select></td>
+      <td><textarea data-campaign="${i}" data-cfield="pending">${escapeHtml(r.pending)}</textarea></td>
+    </tr>`).join('');
+}
+
+function renderDiagnosticFindings(){
+  const wrap=document.getElementById('diagnosticFindingsList');
+  if(!state.diagnosticFindings.length){
+    wrap.innerHTML='<div class="diagnostic-empty">Todavía no hay hallazgos prioritarios registrados. El objetivo de cierre es sintetizar 3–5 si la evidencia lo permite.</div>';
+    return;
+  }
+  wrap.innerHTML=state.diagnosticFindings.map((r,i)=>`
+    <div class="diagnostic-item">
+      <div class="diagnostic-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="diagnostic-field"><label>Hallazgo</label><textarea data-diagnostic="${i}" data-dgfield="finding">${escapeHtml(r.finding)}</textarea></div>
+      <div class="diagnostic-field"><label>Evidencia</label><textarea data-diagnostic="${i}" data-dgfield="evidence">${escapeHtml(r.evidence)}</textarea></div>
+      <div class="diagnostic-field diagnostic-priority"><label>Prioridad</label><select data-diagnostic="${i}" data-dgfield="priority">${optionHtml(['','P0','P1','P2','P3'],r.priority)}</select></div>
+      <div class="diagnostic-field diagnostic-status"><label>Estado</label><select data-diagnostic="${i}" data-dgfield="status">${optionHtml(['','CONFIRMADO','REQUIERE VALIDACIÓN','HIPÓTESIS'],r.status)}</select></div>
+      <button class="icon-btn no-print" data-action="delete-diagnostic" data-index="${i}">×</button>
+      <div class="diagnostic-field"><label>Implicación</label><textarea data-diagnostic="${i}" data-dgfield="implication">${escapeHtml(r.implication)}</textarea></div>
+      <div class="diagnostic-field"><label>Decisión</label><textarea data-diagnostic="${i}" data-dgfield="decision">${escapeHtml(r.decision)}</textarea></div>
+      <div class="diagnostic-field wide"><label>Información faltante</label><textarea data-diagnostic="${i}" data-dgfield="missing">${escapeHtml(r.missing)}</textarea></div>
+    </div>`).join('');
+}
+
+function renderBaseSession1(){
+  const b=state.baseSession1;
+  const modules=[
+    {title:'AS-IS CONFIRMADO',wide:true,fields:[
+      ['asisSummary','Resumen del recorrido actual'],
+      ['leaks','Principales fugas detectadas']
+    ]},
+    {title:'FUNNEL / MÉTRICAS',fields:[
+      ['metricsToday','Métricas que sí podemos medir hoy'],
+      ['metricsMissing','Métricas que todavía faltan'],
+      ['measurementGap','Principal vacío de medición']
+    ]},
+    {title:'META ADS',fields:[
+      ['metaObserved','Qué observamos'],
+      ['metaKeep','Qué conservar'],
+      ['metaReview','Qué revisar'],
+      ['metaValidate','Qué validar']
+    ]},
+    {title:'EVIDENCIA',fields:[['evidence','Hallazgos respaldados por evidencia']]},
+    {title:'HIPÓTESIS / TESTS',fields:[['hypotheses','Qué todavía necesitamos probar']]},
+    {title:'DECISIONES SESIÓN 1',fields:[['decisions','Decisiones que ya no debemos volver a discutir']]}
+  ];
+  document.getElementById('baseSessionGrid').innerHTML=modules.map(m=>`
+    <article class="base-module ${m.wide?'wide':''}">
+      <h4>${m.title}</h4>
+      <div class="field-stack">
+        ${m.fields.map(([key,label])=>`
+          <div>
+            <label class="field-label">${label}</label>
+            <textarea data-base="${key}">${escapeHtml(b[key]||'')}</textarea>
+          </div>`).join('')}
+      </div>
+    </article>`).join('');
+  document.getElementById('baseReviewed').checked=!!b.reviewed;
+}
+
+function renderValidations(){
+  const el=document.getElementById('validationList');
+  el.innerHTML=state.validations.map((v,i)=>`
+    <div class="validation-card">
+      <div class="validation-top">
+        <div class="validation-title">${escapeHtml(v.label)}</div>
+        <select data-validation="${i}" data-vfield="status">
+          ${optionHtml(['','CONFIRMADO','CORREGIR','PENDIENTE'],v.status)}
+        </select>
+      </div>
+      <label class="field-label">Cómo funciona realmente</label>
+      <textarea data-validation="${i}" data-vfield="detail" placeholder="Registrar lo observado o lo que todavía falta confirmar.">${escapeHtml(v.detail)}</textarea>
+    </div>`).join('');
+}
+
+/* 02 */
+function renderHAH(){
+  const tbody=document.querySelector('#hahTable tbody');
+  tbody.innerHTML=state.hah.map((r,i)=>{
+    const d=r.detail||{};
+    const open=hahDetailOpen.has(i);
+    return `
+      <tr>
+        <td class="moment">
+          ${escapeHtml(r.moment)}
+          <button class="hah-detail-btn no-print" data-action="toggle-hah-detail" data-index="${i}">${open?'OCULTAR DETALLE':'DETALLE'}</button>
+        </td>
+        <td><select data-hah="${i}" data-hfield="today">${optionHtml(['','HUMANO','AUTOMÁTICO','HÍBRIDO','NO SABEMOS'],r.today)}</select></td>
+        <td><select data-hah="${i}" data-hfield="future">${optionHtml(['','HUMANO','AUTOMÁTICO','HÍBRIDO','PENDIENTE'],r.future)}</select></td>
+        <td><textarea data-hah="${i}" data-hfield="why" placeholder="Razón breve">${escapeHtml(r.why)}</textarea></td>
+        <td><input type="text" data-hah="${i}" data-hfield="owner" value="${escapeHtml(r.owner)}"></td>
+        <td><textarea data-hah="${i}" data-hfield="pending" placeholder="Pendiente / nota">${escapeHtml(r.pending)}</textarea></td>
+      </tr>
+      <tr class="hah-detail-row ${open?'':'hidden'}" data-hah-detail-row="${i}">
+        <td colspan="6">
+          <div class="hah-detail-panel">
+            <div class="hah-detail-grid">
+              ${[
+                ['trigger','Trigger'],
+                ['condition','Condición'],
+                ['action','Acción'],
+                ['tool','Herramienta'],
+                ['objective','Objetivo'],
+                ['observation','Observación']
+              ].map(([key,label])=>`
+                <div>
+                  <label class="field-label">${label}</label>
+                  <textarea data-hah-detail="${i}" data-dfield="${key}">${escapeHtml(d[key]||'')}</textarea>
+                </div>`).join('')}
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+/* 03 */
+function renderAutomations(){
+  const grid=document.getElementById('automationGrid');
+  const toolOpts=['','Messenger / Meta','HubSpot','Otra','Por validar'];
+  const statusOpts=['','DEFINIDA','REQUIERE VALIDACIÓN TÉCNICA','HIPÓTESIS','NO IMPLEMENTAR TODAVÍA'];
+  const priorityOpts=['','P0','P1','P2','P3'];
+  grid.innerHTML=state.automations.map((a,i)=>`
+    <article class="auto-card card">
+      <div class="auto-number"><strong>AUTOMATIZACIÓN ${String(i+1).padStart(2,'0')}</strong><span class="pill">${rowHasData(a)?'En trabajo':'Opcional'}</span></div>
+      <div class="field-stack">
+        <div><label class="field-label">Nombre</label><input type="text" data-auto="${i}" data-afield="name" value="${escapeHtml(a.name)}"></div>
+        <div><label class="field-label">Problema que resuelve</label><textarea data-auto="${i}" data-afield="problem">${escapeHtml(a.problem)}</textarea></div>
+        <div><label class="field-label">Trigger · ¿Qué evento la activa?</label><textarea data-auto="${i}" data-afield="trigger">${escapeHtml(a.trigger)}</textarea></div>
+        <div><label class="field-label">Condición · ¿Qué tiene que ser verdad?</label><textarea data-auto="${i}" data-afield="condition">${escapeHtml(a.condition)}</textarea></div>
+        <div><label class="field-label">Acción · ¿Qué hace el sistema?</label><textarea data-auto="${i}" data-afield="action">${escapeHtml(a.action)}</textarea></div>
+        <div><label class="field-label">Resultado esperado · ¿Qué debe quedar resuelto?</label><textarea data-auto="${i}" data-afield="result">${escapeHtml(a.result)}</textarea></div>
+        <div><label class="field-label">Excepción · ¿Cuándo se detiene o pasa a humano?</label><textarea data-auto="${i}" data-afield="exception">${escapeHtml(a.exception)}</textarea></div>
+        <div><label class="field-label">Responsable</label><input type="text" data-auto="${i}" data-afield="owner" value="${escapeHtml(a.owner)}"></div>
+        <div class="field-row">
+          <div><label class="field-label">Herramienta candidata</label><select data-auto="${i}" data-afield="tool">${optionHtml(toolOpts,a.tool)}</select></div>
+          <div><label class="field-label">Prioridad</label><select data-auto="${i}" data-afield="priority">${optionHtml(priorityOpts,a.priority)}</select></div>
+        </div>
+        <div><label class="field-label">Métrica · ¿Cómo sabemos si funciona?</label><textarea data-auto="${i}" data-afield="metric">${escapeHtml(a.metric)}</textarea></div>
+        <div><label class="field-label">Estado</label><select data-auto="${i}" data-afield="status">${optionHtml(statusOpts,a.status)}</select></div>
+      </div>
+    </article>`).join('');
+}
+
+/* 04 */
+function renderAudit(){
+  const wrap=document.getElementById('auditGroups');
+  wrap.innerHTML=Object.entries(AUDIT).map(([letter,g])=>`
+    <article class="audit-group card">
+      <div class="audit-group-head"><span class="audit-letter">${letter}</span><h3>${g.title}</h3></div>
+      ${g.fields.map(f=>{
+        const val=state.audit[f.id]?.value ?? '';
+        const pending=!!state.audit[f.id]?.pending;
+        let control='';
+        if(f.type==='textarea') control=`<textarea data-audit="${f.id}" data-audit-value>${escapeHtml(val)}</textarea>`;
+        if(f.type==='select') control=`<select data-audit="${f.id}" data-audit-value>${optionHtml(f.options,val)}</select>`;
+        if(f.type==='checks'){
+          const arr=Array.isArray(val)?val:[];
+          control=`<div class="check-list">${f.options.map(o=>`<label><input type="checkbox" data-audit="${f.id}" data-audit-check="${escapeHtml(o)}"${arr.includes(o)?' checked':''}>${escapeHtml(o)}</label>`).join('')}</div>`;
+        }
+        return `<div class="audit-point">
+          <div class="audit-point-head">
+            <strong>${escapeHtml(f.label)}</strong>
+            <label class="tech-switch"><input type="checkbox" data-audit="${f.id}" data-audit-pending${pending?' checked':''}> PENDIENTE TÉCNICO</label>
+          </div>
+          ${control}
+        </div>`;
+      }).join('')}
+    </article>`).join('');
+}
+
+/* 05 */
+function renderPipeline(){
+  const tbody=document.querySelector('#pipelineTable tbody');
+  tbody.innerHTML=state.pipeline.map((r,i)=>`
+    <tr>
+      <td><input type="text" data-pipe="${i}" data-pfield="stage" value="${escapeHtml(r.stage)}" placeholder="${i===0?'Fila de trabajo':''}"></td>
+      <td><textarea data-pipe="${i}" data-pfield="entry">${escapeHtml(r.entry)}</textarea></td>
+      <td><textarea data-pipe="${i}" data-pfield="info">${escapeHtml(r.info)}</textarea></td>
+      <td><input type="text" data-pipe="${i}" data-pfield="owner" value="${escapeHtml(r.owner)}"></td>
+      <td><textarea data-pipe="${i}" data-pfield="next">${escapeHtml(r.next)}</textarea></td>
+      <td><textarea data-pipe="${i}" data-pfield="exit">${escapeHtml(r.exit)}</textarea></td>
+      <td><textarea data-pipe="${i}" data-pfield="metric" placeholder="¿Cómo sabemos si funciona o se estanca?">${escapeHtml(r.metric)}</textarea></td>
+      <td><select data-pipe="${i}" data-pfield="type">${optionHtml(['','ETAPA','PROPIEDAD','TAREA','AUTOMATIZACIÓN','PENDIENTE'],r.type)}</select></td>
+      <td class="no-print"><div class="row-actions"><button class="icon-btn" data-action="delete-pipeline" data-index="${i}" title="Eliminar fila">×</button></div></td>
+    </tr>`).join('');
+}
+
+/* 06 */
+function renderTobe(){
+  const wrap=document.getElementById('tobeGroups');
+  wrap.innerHTML=TOBE_GROUPS.map(group=>{
+    const rows=state.tobe[group]||[];
+    return `<div class="tobe-group ${rows.length?'has-rows':''}">
+      <div class="tobe-group-head">
+        <b>${group}</b>
+        <button class="btn btn-sm btn-orange no-print" data-action="add-tobe" data-group="${group}">+ Agregar paso</button>
+      </div>
+      ${rows.length?`<div class="table-wrap"><table>
+        <thead><tr><th>Paso</th><th>Trigger</th><th>Qué ocurre</th><th>Tipo</th><th>Responsable</th><th>Herramienta</th><th>Dato obligatorio</th><th>Salida / excepción</th><th>Métrica</th><th class="no-print">Acción</th></tr></thead>
+        <tbody>${rows.map((r,i)=>`
+          <tr>
+            <td><input type="text" data-tobe-group="${group}" data-tobe="${i}" data-tfield="step" value="${escapeHtml(r.step)}"></td>
+            <td><textarea data-tobe-group="${group}" data-tobe="${i}" data-tfield="trigger">${escapeHtml(r.trigger)}</textarea></td>
+            <td><textarea data-tobe-group="${group}" data-tobe="${i}" data-tfield="occurs">${escapeHtml(r.occurs)}</textarea></td>
+            <td><select data-tobe-group="${group}" data-tobe="${i}" data-tfield="type">${optionHtml(['','Humano','Automático','Híbrido','Pendiente'],r.type)}</select></td>
+            <td><input type="text" data-tobe-group="${group}" data-tobe="${i}" data-tfield="owner" value="${escapeHtml(r.owner)}"></td>
+            <td><input type="text" data-tobe-group="${group}" data-tobe="${i}" data-tfield="tool" value="${escapeHtml(r.tool)}"></td>
+            <td><textarea data-tobe-group="${group}" data-tobe="${i}" data-tfield="data">${escapeHtml(r.data)}</textarea></td>
+            <td><textarea data-tobe-group="${group}" data-tobe="${i}" data-tfield="exit">${escapeHtml(r.exit)}</textarea></td>
+            <td><textarea data-tobe-group="${group}" data-tobe="${i}" data-tfield="metric">${escapeHtml(r.metric)}</textarea></td>
+            <td class="no-print"><button class="icon-btn" data-action="delete-tobe" data-group="${group}" data-index="${i}">×</button></td>
+          </tr>`).join('')}</tbody></table></div>`:
+        `<div class="tobe-empty">Sin pasos definidos todavía. Agregar solo lo que se acuerde en vivo.</div>`}
+    </div>`;
+  }).join('');
+}
+
+/* 07 */
+function renderQuality(){
+  const wrap=document.getElementById('qualityList');
+  wrap.innerHTML=state.quality.map((r,i)=>{
+    const def=QUALITY[i];
+    const leak=r.answer && r.answer===def.leakWhen;
+    return `<div class="quality-item">
+      <div class="quality-row">
+        <div class="quality-q">${escapeHtml(r.question)}</div>
+        <div class="segmented">
+          ${['SI','NO','PENDIENTE'].map(v=>`<label><input type="radio" name="quality-${i}" value="${v}" data-quality="${i}"${r.answer===v?' checked':''}><span>${v==='SI'?'SÍ':v}</span></label>`).join('')}
+        </div>
+      </div>
+      <div class="quality-fix ${leak?'':'hidden'}" id="quality-fix-${i}">
+        <label class="field-label">¿Qué necesitamos corregir?</label>
+        <textarea data-quality-fix="${i}">${escapeHtml(r.fix)}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+  renderLeakSummary();
+}
+function openLeaks(){
+  return state.quality.map((r,i)=>({r,def:QUALITY[i]})).filter(x=>x.r.answer && x.r.answer===x.def.leakWhen);
+}
+function renderLeakSummary(){
+  const el=document.getElementById('leakSummaryText');
+  const leaks=openLeaks();
+  if(!state.quality.some(x=>x.answer)){
+    el.innerHTML='Ninguna respuesta registrada todavía.';
+  }else if(!leaks.length){
+    el.innerHTML='No hay fugas abiertas identificadas con las respuestas actuales.';
+  }else{
+    el.innerHTML=`<strong>${leaks.length} fuga${leaks.length===1?'':'s'} abierta${leaks.length===1?'':'s'}.</strong><ul>${leaks.map(x=>`<li>${escapeHtml(x.r.question)}${nonEmpty(x.r.fix)?' — '+escapeHtml(x.r.fix):''}</li>`).join('')}</ul>`;
+  }
+}
+
+/* 08 */
+function renderPriorities(){
+  const wrap=document.getElementById('priorityList');
+  if(!state.priorities.length){
+    wrap.innerHTML='<div class="notice">Todavía no hay acciones o problemas agregados. Agrega únicamente lo que surja de la evidencia y del TO-BE.</div>';
+    return;
+  }
+  wrap.innerHTML=state.priorities.map((r,i)=>`
+    <div class="priority-item" data-priority="${escapeHtml(r.priority||'')}">
+      <div class="priority-badge">${escapeHtml(r.priority||'—')}</div>
+
+      <div class="priority-field priority-action">
+        <label>Acción / problema</label>
+        <input type="text" data-priority-row="${i}" data-prfield="action" value="${escapeHtml(r.action)}">
+      </div>
+
+      <div class="priority-field priority-priority">
+        <label>Prioridad</label>
+        <select data-priority-row="${i}" data-prfield="priority">${optionHtml(['','P0','P1','P2','P3'],r.priority)}</select>
+      </div>
+
+      <div class="priority-field priority-impact">
+        <label>Impacto</label>
+        <select data-priority-row="${i}" data-prfield="impact">${optionHtml(['','ALTO','MEDIO','BAJO'],r.impact)}</select>
+      </div>
+
+      <div class="priority-field priority-effort">
+        <label>Esfuerzo</label>
+        <select data-priority-row="${i}" data-prfield="effort">${optionHtml(['','ALTO','MEDIO','BAJO'],r.effort)}</select>
+      </div>
+
+      <div class="priority-field priority-why">
+        <label>Por qué</label>
+        <textarea data-priority-row="${i}" data-prfield="why">${escapeHtml(r.why)}</textarea>
+      </div>
+
+      <div class="priority-field priority-confidence">
+        <label>Confianza</label>
+        <select data-priority-row="${i}" data-prfield="confidence">${optionHtml(['','Alta','Media','Baja'],r.confidence)}</select>
+      </div>
+
+      <div class="priority-field priority-dependency">
+        <label>Dependencia</label>
+        <input type="text" data-priority-row="${i}" data-prfield="dependency" value="${escapeHtml(r.dependency)}">
+      </div>
+
+      <div class="priority-field priority-owner">
+        <label>Responsable</label>
+        <input type="text" data-priority-row="${i}" data-prfield="owner" value="${escapeHtml(r.owner)}">
+      </div>
+
+      <div class="priority-field priority-evidence">
+        <label>Evidencia</label>
+        <input type="text" data-priority-row="${i}" data-prfield="evidence" value="${escapeHtml(r.evidence)}">
+      </div>
+
+      <div class="move-stack no-print">
+        <button class="icon-btn" data-action="priority-up" data-index="${i}" title="Mover arriba">↑</button>
+        <button class="icon-btn" data-action="priority-down" data-index="${i}" title="Mover abajo">↓</button>
+        <button class="icon-btn" data-action="delete-priority" data-index="${i}" title="Eliminar">×</button>
+      </div>
+    </div>`).join('');
+}
+
+/* 09 */
+function renderRoadmap(){
+  const tbody=document.querySelector('#roadmapTable tbody');
+  tbody.innerHTML=state.roadmap.map((r,i)=>`
+    <tr>
+      <td style="font-weight:950;color:var(--orange)">${String(i+1).padStart(2,'0')}</td>
+      <td><input type="text" data-road="${i}" data-rfield="action" value="${escapeHtml(r.action)}"></td>
+      <td><select data-road="${i}" data-rfield="priority">${optionHtml(['','P0','P1','P2','P3'],r.priority)}</select></td>
+      <td><textarea data-road="${i}" data-rfield="problem">${escapeHtml(r.problem)}</textarea></td>
+      <td><input type="text" data-road="${i}" data-rfield="owner" value="${escapeHtml(r.owner)}"></td>
+      <td><input type="text" data-road="${i}" data-rfield="dependency" value="${escapeHtml(r.dependency)}"></td>
+      <td><input type="text" data-road="${i}" data-rfield="when" value="${escapeHtml(r.when)}"></td>
+      <td><textarea data-road="${i}" data-rfield="evidence">${escapeHtml(r.evidence)}</textarea></td>
+      <td><select data-road="${i}" data-rfield="status">${optionHtml(['','NO INICIADA','LISTA PARA EJECUTAR','DEPENDE DE VALIDACIÓN','IMPLEMENTADA'],r.status)}</select></td>
+      <td class="no-print"><button class="icon-btn" data-action="delete-roadmap" data-index="${i}">×</button></td>
+    </tr>`).join('');
+  document.getElementById('roadCount').textContent=`${state.roadmap.length} / 7`;
+}
+
+/* 10 */
+function renderSystem(){
+  const wrap=document.getElementById('systemGrid');
+  let idx=0;
+  wrap.innerHTML=SYSTEM_GROUPS.map(g=>`
+    <article class="system-block card">
+      <div class="system-block-head"><span class="system-letter">${g.letter}</span><h3>${g.title}</h3></div>
+      ${g.items.map(q=>{
+        const key='q'+(++idx);
+        return `<div class="system-q"><label>${idx}. ${escapeHtml(q)}</label><textarea data-system="${key}">${escapeHtml(state.system[key]||'')}</textarea></div>`;
+      }).join('')}
+    </article>`).join('');
+  if(state.summaryGenerated) generateSystemSummary(false);
+}
+function generateSystemSummary(save=true){
+  const view=document.getElementById('systemSummaryView');
+  let idx=0;
+  const groups=SYSTEM_GROUPS.map(g=>{
+    const lines=g.items.map(q=>{
+      const key='q'+(++idx), val=state.system[key]||'';
+      return nonEmpty(val)?`<div class="summary-line"><b>${escapeHtml(q)}</b>${escapeHtml(val)}</div>`:'';
+    }).filter(Boolean).join('');
+    return lines?`<div class="summary-group"><h4>${g.letter} · ${g.title}</h4>${lines}</div>`:'';
+  }).filter(Boolean).join('');
+  view.innerHTML=`<h3>RESUMEN DEL SISTEMA</h3>${groups||'<div class="muted">Todavía no hay respuestas suficientes para generar el resumen.</div>'}`;
+  view.classList.remove('hidden');
+  state.summaryGenerated=true;
+  if(save) saveState(false);
+}
+
+
+function renderFollowup(){
+  document.getElementById('followupDate').value=state.followup.date||'';
+  const wrap=document.getElementById('followupList');
+  const rows=state.followup.items||[];
+  if(!rows.length){
+    wrap.innerHTML='<div class="followup-empty">Todavía no hay puntos de seguimiento. Agrega únicamente lo que deba verificarse después de la implementación inicial.</div>';
+    return;
+  }
+  wrap.innerHTML=`<div class="followup-list">${rows.map((r,i)=>`
+    <div class="followup-item">
+      <div class="followup-num">${String(i+1).padStart(2,'0')}</div>
+      ${[
+        ['verify','Qué vamos a verificar'],
+        ['evidence','Evidencia esperada'],
+        ['metric','Métrica / señal'],
+        ['owner','Responsable'],
+        ['baseline','Estado inicial / baseline']
+      ].map(([key,label])=>`
+        <div class="followup-field">
+          <label>${label}</label>
+          <textarea data-followup="${i}" data-ffield="${key}">${escapeHtml(r[key]||'')}</textarea>
+        </div>`).join('')}
+      <button class="icon-btn followup-delete no-print" data-action="delete-followup" data-index="${i}">×</button>
+    </div>`).join('')}</div>`;
+}
+
+function renderSessionLog(){
+  const wrap=document.getElementById('sessionLogList');
+  if(!state.sessionLog.length){
+    wrap.innerHTML='<div class="session-log-empty">Sin registros transversales todavía.</div>';
+    return;
+  }
+  wrap.innerHTML=state.sessionLog.map((r,i)=>`
+    <div class="session-log-item">
+      <div class="log-type">${escapeHtml(r.type||'PENDIENTE')}</div>
+      <div class="log-priority">${escapeHtml(r.priority||'—')}</div>
+      <div class="log-note">${escapeHtml(r.note||'')}</div>
+      <div class="log-destination">${escapeHtml(r.destination||'')}</div>
+      <div class="log-time">${escapeHtml(r.time||'')}</div>
+      <div class="log-actions no-print">
+        <button class="icon-btn" data-action="edit-log" data-index="${i}">✎</button>
+        <button class="icon-btn" data-action="delete-log" data-index="${i}">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function openLogModal(index=null){
+  logEditIndex=index;
+  const modal=document.getElementById('sessionLogModal');
+  const rec=index===null?null:state.sessionLog[index];
+  document.getElementById('sessionLogModalTitle').textContent=index===null?'REGISTRAR HALLAZGO':'EDITAR REGISTRO';
+  document.getElementById('logType').value=rec?.type||'';
+  document.getElementById('logPriority').value=rec?.priority||'';
+  document.getElementById('logNote').value=rec?.note||'';
+  document.getElementById('logDestination').value=rec?.destination||'';
+  document.getElementById('logTimePreview').textContent=rec?.time||nowTime();
+  modal.classList.remove('hidden');
+  setTimeout(()=>document.getElementById('logNote').focus(),30);
+}
+function closeLogModal(){
+  document.getElementById('sessionLogModal').classList.add('hidden');
+  logEditIndex=null;
+}
+function saveLogRecord(){
+  const record={
+    id:logEditIndex===null?('log_'+Date.now()+'_'+Math.random().toString(36).slice(2)):state.sessionLog[logEditIndex].id,
+    type:document.getElementById('logType').value,
+    note:document.getElementById('logNote').value.trim(),
+    priority:document.getElementById('logPriority').value,
+    destination:document.getElementById('logDestination').value,
+    time:logEditIndex===null?nowTime():state.sessionLog[logEditIndex].time
+  };
+  if(!nonEmpty(record.note)){
+    alert('Escribe una nota para guardar el registro.');
+    return;
+  }
+  if(logEditIndex===null) state.sessionLog.push(record);
+  else state.sessionLog[logEditIndex]=record;
+  closeLogModal();
+  renderSessionLog();
+  saveState(false);
+}
+
+/* final status */
+function hubspotReviewed(){
+  let total=0, done=0;
+  Object.values(AUDIT).forEach(g=>g.fields.forEach(f=>{
+    total++;
+    const a=state.audit[f.id]||{};
+    let has=false;
+    if(f.type==='checks') has=Array.isArray(a.value)&&a.value.length>0;
+    else has=nonEmpty(a.value);
+    if(has||a.pending) done++;
+  }));
+  return total>0 && done===total;
+}
+function pipelineDesigned(){
+  const rows=state.pipeline.filter(r=>rowHasData(r));
+  return rows.length>0 && rows.every(r=>nonEmpty(r.stage)&&nonEmpty(r.entry)&&nonEmpty(r.next)&&nonEmpty(r.exit)&&nonEmpty(r.metric)&&nonEmpty(r.type));
+}
+function tobeDesigned(){
+  const rows=TOBE_GROUPS.flatMap(g=>state.tobe[g]||[]);
+  return rows.length>0 && rows.every(r=>nonEmpty(r.step)&&nonEmpty(r.trigger)&&nonEmpty(r.occurs)&&nonEmpty(r.type)&&nonEmpty(r.owner)&&nonEmpty(r.exit));
+}
+function hahComplete(){
+  return state.hah.length===16 && state.hah.every(r=>nonEmpty(r.future));
+}
+function commitmentDefined(){
+  const f=state.fields;
+  return ['commit.action','commit.before','commit.why','commit.done','commit.evidence'].every(k=>nonEmpty(f[k]));
+}
+function systemComplete(){
+  return Array.from({length:14},(_,i)=>state.system['q'+(i+1)]).every(nonEmpty);
+}
+function baseSession1Complete(){
+  const b=state.baseSession1||{};
+  const required=['asisSummary','leaks','metricsToday','metricsMissing','measurementGap','metaObserved','evidence','hypotheses','decisions'];
+  return !!b.reviewed && required.every(k=>nonEmpty(b[k]));
+}
+function asisDetailedComplete(){
+  const rows=state.asisDetailed||[];
+  return rows.length>=8 && rows.every(r=>{
+    if(!nonEmpty(r.moment)) return false;
+
+    const coreComplete =
+      nonEmpty(r.occurs) &&
+      nonEmpty(r.owner) &&
+      nonEmpty(r.tool) &&
+      nonEmpty(r.risk) &&
+      nonEmpty(r.evidence);
+
+    return coreComplete || nonEmpty(r.pending);
+  });
+}
+function funnelMetricsComplete(){
+  const rows=state.funnelMetrics||[];
+  return rows.length>=9 && rows.every(r=>{
+    if(!nonEmpty(r.stage) || !nonEmpty(r.available)) return false;
+
+    const full =
+      nonEmpty(r.definition) &&
+      nonEmpty(r.current) &&
+      nonEmpty(r.source) &&
+      nonEmpty(r.reviewOwner) &&
+      nonEmpty(r.frequency);
+
+    return full || nonEmpty(r.pending);
+  });
+}
+function diagnosticCount(){
+  return (state.diagnosticFindings||[])
+    .filter(r=>nonEmpty(r.finding))
+    .length;
+}
+function diagnosticReady(){
+  const rows=(state.diagnosticFindings||[])
+    .filter(r=>nonEmpty(r.finding));
+
+  return rows.length>=3 && rows.every(r=>
+    nonEmpty(r.finding) &&
+    nonEmpty(r.implication) &&
+    nonEmpty(r.priority) &&
+    nonEmpty(r.status) &&
+    (nonEmpty(r.evidence) || nonEmpty(r.missing))
+  );
+}
+function campaignChecklistReviewed(){
+  const rows=state.campaignChecklist||[];
+  return rows.length>=12 && rows.every(r=>nonEmpty(r.classification)&&nonEmpty(r.decision));
+}
+function followupPrepared(){
+  const rows=state.followup?.items||[];
+  return nonEmpty(state.followup?.date) && rows.length>0 &&
+    rows.every(r=>['verify','evidence','metric','owner','baseline'].every(k=>nonEmpty(r[k])));
+}
+function s1Complete(){
+  return baseSession1Complete() && state.validations.every(v=>nonEmpty(v.status));
+}
+function qualityComplete(){
+  return state.quality.every(x=>nonEmpty(x.answer));
+}
+function updateFinalStatus(){
+  const autos=state.automations.filter(a=>rowHasData(a)).length;
+  const leaks=openLeaks().length;
+  const items=[
+    ['Base Sesión 1',baseSession1Complete()?'Completa':'Incompleta',baseSession1Complete()],
+    ['AS-IS detallado',asisDetailedComplete()?'Completo':'Incompleto',asisDetailedComplete()],
+    ['Funnel de métricas',funnelMetricsComplete()?'Completo':'Incompleto',funnelMetricsComplete()],
+    ['Checklist Meta Ads',campaignChecklistReviewed()?'Revisado':'Pendiente',campaignChecklistReviewed()],
+    ['Diagnóstico',`${diagnosticCount()} / 5 hallazgos`,diagnosticReady()],
+    ['Matriz H/A/H',hahComplete()?'Completa':'Incompleta',hahComplete()],
+    ['Automatizaciones prioritarias',`${autos} / 3`,autos>0],
+    ['HubSpot',hubspotReviewed()?'Revisado':'Pendiente',hubspotReviewed()],
+    ['Pipeline',pipelineDesigned()?'Diseñado':'Pendiente',pipelineDesigned()],
+    ['TO-BE',tobeDesigned()?'Diseñado':'Pendiente',tobeDesigned()],
+    ['Fugas abiertas',String(leaks),leaks===0&&qualityComplete()],
+    ['Roadmap',`${state.roadmap.length} acciones`,state.roadmap.length>=5],
+    ['Primer compromiso',commitmentDefined()?'Definido':'Pendiente',commitmentDefined()],
+    ['Registro de decisiones',`${state.sessionLog.length} registros`,state.sessionLog.length>0],
+    ['Seguimiento',followupPrepared()?'Preparado':'Pendiente',followupPrepared()]
+  ];
+  document.getElementById('finalStatusGrid').innerHTML=items.map(([label,val,good])=>`
+    <div class="status-card"><span>${label}</span><strong class="${good?'status-good':'status-warn'}">${val}</strong></div>`).join('');
+
+  document.getElementById('status-s1').textContent=s1Complete()?'Validado':'En proceso';
+  document.getElementById('status-s2').textContent=hahComplete()?'Completa':'En proceso';
+  document.getElementById('status-s3').textContent=`${autos} / 3`;
+  document.getElementById('status-s4').textContent=hubspotReviewed()?'Revisado':'Pendiente';
+  document.getElementById('status-s5').textContent=pipelineDesigned()?'Diseñado':'Pendiente';
+  document.getElementById('status-s6').textContent=tobeDesigned()?'Diseñado':'Pendiente';
+  document.getElementById('status-s7').textContent=qualityComplete()?`${leaks} fuga${leaks===1?'':'s'}`:'Pendiente';
+  document.getElementById('status-s8').textContent=`${state.priorities.length} elemento${state.priorities.length===1?'':'s'}`;
+  document.getElementById('status-s9').textContent=`${state.roadmap.length} acciones`;
+  document.getElementById('status-s10').textContent=systemComplete()?'Completo':'Pendiente';
+  document.getElementById('status-s11').textContent=commitmentDefined()?'Definido':'Pendiente';
+}
+/* Export */
+function downloadBlob(filename, content, type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),800);
+}
+function exportBackup(){
+  saveState(false);
+  downloadBlob('ARQCOES_ULISES_SESION_2_BACKUP.json',JSON.stringify(state,null,2),'application/json');
+}
+function mdVal(v){return nonEmpty(v)?String(v).trim():'PENDIENTE'}
+function buildReadable(){
+  collectStaticFields();
+  const lines=[];
+  const b=state.baseSession1||{};
+
+  lines.push('# ARQCOES · RESULTADOS COMPLETOS DEL TALLER');
+  lines.push('');
+  lines.push(`Último guardado: ${state.meta.lastSaved||'PENDIENTE'}`);
+  lines.push('');
+
+  lines.push('## BASE SESIÓN 1');
+  lines.push(`### AS-IS`);
+  lines.push(`- Resumen del recorrido actual: ${mdVal(b.asisSummary)}`);
+  lines.push(`- Principales fugas detectadas: ${mdVal(b.leaks)}`);
+  lines.push('');
+  lines.push(`### FUNNEL / MÉTRICAS`);
+  lines.push(`- Métricas que sí podemos medir hoy: ${mdVal(b.metricsToday)}`);
+  lines.push(`- Métricas que todavía faltan: ${mdVal(b.metricsMissing)}`);
+  lines.push(`- Principal vacío de medición: ${mdVal(b.measurementGap)}`);
+  lines.push('');
+  lines.push(`### META ADS`);
+  lines.push(`- Qué observamos: ${mdVal(b.metaObserved)}`);
+  lines.push(`- Qué conservar: ${mdVal(b.metaKeep)}`);
+  lines.push(`- Qué revisar: ${mdVal(b.metaReview)}`);
+  lines.push(`- Qué validar: ${mdVal(b.metaValidate)}`);
+  lines.push('');
+  lines.push(`### EVIDENCIA`);
+  lines.push(`- Hallazgos respaldados por evidencia: ${mdVal(b.evidence)}`);
+  lines.push('');
+  lines.push(`### HIPÓTESIS / TESTS`);
+  lines.push(`- Qué todavía necesitamos probar: ${mdVal(b.hypotheses)}`);
+  lines.push('');
+  lines.push(`### DECISIONES SESIÓN 1`);
+  lines.push(`- Decisiones que ya no debemos volver a discutir: ${mdVal(b.decisions)}`);
+  lines.push(`- Base revisada en vivo: ${b.reviewed?'SÍ':'NO'}`);
+  lines.push('');
+
+  lines.push('### AS-IS DETALLADO');
+  state.asisDetailed.forEach((r,i)=>lines.push(
+    `${i+1}. **Momento:** ${mdVal(r.moment)} | Qué ocurre: ${mdVal(r.occurs)} | Responsable: ${mdVal(r.owner)} | Herramienta: ${mdVal(r.tool)} | Información/dato: ${mdVal(r.info)} | Falla/riesgo: ${mdVal(r.risk)} | Evidencia: ${mdVal(r.evidence)} | Pendiente: ${mdVal(r.pending)}`
+  ));
+  lines.push('');
+
+  lines.push('### FUNNEL / MÉTRICAS DETALLADO');
+  lines.push('- **Nota:** CORTE OBSERVADO · NO BENCHMARK');
+  state.funnelMetrics.forEach((r,i)=>lines.push(
+    `${i+1}. **Etapa/métrica:** ${mdVal(r.stage)} | Definición acordada: ${mdVal(r.definition)} | Dato actual: ${mdVal(r.current)} | Fuente: ${mdVal(r.source)} | Responsable de revisar: ${mdVal(r.reviewOwner)} | Frecuencia: ${mdVal(r.frequency)} | Disponible hoy: ${mdVal(r.available)} | Pendiente: ${mdVal(r.pending)}`
+  ));
+  lines.push('');
+
+  lines.push('### META ADS · CHECKLIST');
+  state.campaignChecklist.forEach((r,i)=>lines.push(
+    `${i+1}. **Elemento:** ${mdVal(r.element)} | Observación: ${mdVal(r.observed)} | Evidencia: ${mdVal(r.evidence)} | Clasificación: ${mdVal(r.classification)} | Decisión: ${mdVal(r.decision)} | Pendiente: ${mdVal(r.pending)}`
+  ));
+  lines.push('');
+
+  lines.push('## VALIDACIONES SESIÓN 2');
+  state.validations.forEach(v=>lines.push(`- **${v.label}** — Estado: ${mdVal(v.status)} — Cómo funciona realmente: ${mdVal(v.detail)}`));
+  lines.push(`- **Qué cambió respecto a Sesión 1:** ${mdVal(state.fields.recapChange)}`);
+  lines.push('');
+
+  lines.push('## MATRIZ H/A/H');
+  state.hah.forEach(r=>{
+    lines.push(`### ${r.moment}`);
+    lines.push(`- Hoy: ${mdVal(r.today)}`);
+    lines.push(`- Futuro: ${mdVal(r.future)}`);
+    lines.push(`- Por qué: ${mdVal(r.why)}`);
+    lines.push(`- Responsable: ${mdVal(r.owner)}`);
+    lines.push(`- Pendiente: ${mdVal(r.pending)}`);
+    lines.push(`- Trigger: ${mdVal(r.detail?.trigger)}`);
+    lines.push(`- Condición: ${mdVal(r.detail?.condition)}`);
+    lines.push(`- Acción: ${mdVal(r.detail?.action)}`);
+    lines.push(`- Herramienta: ${mdVal(r.detail?.tool)}`);
+    lines.push(`- Objetivo: ${mdVal(r.detail?.objective)}`);
+    lines.push(`- Observación: ${mdVal(r.detail?.observation)}`);
+  });
+  lines.push('');
+
+  lines.push('## AUTOMATIZACIONES PRIORITARIAS');
+  state.automations.forEach((a,i)=>{
+    if(!rowHasData(a)) return;
+    lines.push(`### Automatización ${String(i+1).padStart(2,'0')} · ${mdVal(a.name)}`);
+    lines.push(`- Problema: ${mdVal(a.problem)}`);
+    lines.push(`- Trigger: ${mdVal(a.trigger)}`);
+    lines.push(`- Condición: ${mdVal(a.condition)}`);
+    lines.push(`- Acción: ${mdVal(a.action)}`);
+    lines.push(`- Resultado esperado: ${mdVal(a.result)}`);
+    lines.push(`- Excepción: ${mdVal(a.exception)}`);
+    lines.push(`- Responsable: ${mdVal(a.owner)}`);
+    lines.push(`- Herramienta candidata: ${mdVal(a.tool)}`);
+    lines.push(`- Métrica: ${mdVal(a.metric)}`);
+    lines.push(`- Estado: ${mdVal(a.status)}`);
+    lines.push(`- Prioridad: ${mdVal(a.priority)}`);
+  });
+  lines.push('');
+
+  lines.push('## AUDITORÍA HUBSPOT');
+  Object.entries(AUDIT).forEach(([letter,g])=>{
+    lines.push(`### ${letter} · ${g.title}`);
+    g.fields.forEach(f=>{
+      const a=state.audit[f.id]||{};
+      const val=Array.isArray(a.value)?a.value.join(', '):a.value;
+      lines.push(`- **${f.label}**: ${mdVal(val)}${a.pending?' · PENDIENTE TÉCNICO':''}`);
+    });
+  });
+  lines.push('');
+
+  lines.push('## PIPELINE');
+  state.pipeline.filter(r=>rowHasData(r)).forEach((r,i)=>lines.push(
+    `${i+1}. ${mdVal(r.stage)} | Entrada: ${mdVal(r.entry)} | Información: ${mdVal(r.info)} | Responsable: ${mdVal(r.owner)} | Siguiente paso: ${mdVal(r.next)} | Salida: ${mdVal(r.exit)} | Métrica/indicador: ${mdVal(r.metric)} | Tipo: ${mdVal(r.type)}`
+  ));
+  lines.push('');
+
+  lines.push('## TO-BE');
+  TOBE_GROUPS.forEach(g=>{
+    lines.push(`### ${g}`);
+    const rows=state.tobe[g]||[];
+    if(!rows.length) lines.push('- PENDIENTE');
+    rows.forEach((r,i)=>lines.push(`${i+1}. **${mdVal(r.step)}** | Trigger: ${mdVal(r.trigger)} | Qué ocurre: ${mdVal(r.occurs)} | Tipo: ${mdVal(r.type)} | Responsable: ${mdVal(r.owner)} | Herramienta: ${mdVal(r.tool)} | Dato: ${mdVal(r.data)} | Salida/excepción: ${mdVal(r.exit)} | Métrica: ${mdVal(r.metric)}`));
+  });
+  lines.push('');
+
+  lines.push('## PRUEBA DE CALIDAD');
+  state.quality.forEach(r=>lines.push(`- **${r.question}**: ${mdVal(r.answer)}${nonEmpty(r.fix)?' · Corregir: '+r.fix:''}`));
+  lines.push(`- **Fugas abiertas:** ${openLeaks().length}`);
+  lines.push('');
+
+  lines.push('## PRIORIDADES');
+  lines.push('### HALLAZGOS PRIORITARIOS');
+  if(!state.diagnosticFindings.length) lines.push('- PENDIENTE');
+  state.diagnosticFindings.forEach((r,i)=>lines.push(
+    `${i+1}. **Hallazgo:** ${mdVal(r.finding)} | Evidencia: ${mdVal(r.evidence)} | Implicación: ${mdVal(r.implication)} | Decisión: ${mdVal(r.decision)} | Información faltante: ${mdVal(r.missing)} | Prioridad: ${mdVal(r.priority)} | Estado: ${mdVal(r.status)}`
+  ));
+  lines.push('');
+  lines.push('### ACCIONES / PRIORIDADES');
+  state.priorities.forEach((r,i)=>lines.push(
+    `${i+1}. **${mdVal(r.action)}** | Prioridad: ${mdVal(r.priority)} | Impacto: ${mdVal(r.impact)} | Esfuerzo: ${mdVal(r.effort)} | Confianza: ${mdVal(r.confidence)} | Por qué: ${mdVal(r.why)} | Dependencia: ${mdVal(r.dependency)} | Responsable: ${mdVal(r.owner)} | Evidencia: ${mdVal(r.evidence)}`
+  ));
+  lines.push('');
+
+  lines.push('## ROADMAP');
+  state.roadmap.forEach((r,i)=>lines.push(`${i+1}. **${mdVal(r.action)}** | ${mdVal(r.priority)} | Problema: ${mdVal(r.problem)} | Responsable: ${mdVal(r.owner)} | Dependencia: ${mdVal(r.dependency)} | Cuándo: ${mdVal(r.when)} | Evidencia: ${mdVal(r.evidence)} | Estado: ${mdVal(r.status)}`));
+  lines.push('');
+
+  lines.push('## MI SISTEMA EN UNA PÁGINA');
+  let idx=0;
+  SYSTEM_GROUPS.forEach(g=>{
+    lines.push(`### ${g.letter} · ${g.title}`);
+    g.items.forEach(q=>{const key='q'+(++idx);lines.push(`${idx}. **${q}** ${mdVal(state.system[key])}`)});
+  });
+  lines.push('');
+
+  lines.push('## PRIMER COMPROMISO');
+  lines.push(`- Yo me comprometo a: ${mdVal(state.fields['commit.action'])}`);
+  lines.push(`- Antes de: ${mdVal(state.fields['commit.before'])}`);
+  lines.push(`- Porque resuelve: ${mdVal(state.fields['commit.why'])}`);
+  lines.push(`- Sabremos que está hecho cuando: ${mdVal(state.fields['commit.done'])}`);
+  lines.push(`- Evidencia: ${mdVal(state.fields['commit.evidence'])}`);
+  lines.push(`- Dependencia: ${mdVal(state.fields['commit.dependency'])}`);
+  lines.push(`- Bajo control directo de Ulises: ${mdVal(state.fields['commit.directControl'])}`);
+  lines.push('');
+
+  lines.push('## REGISTRO DE DECISIONES / HALLAZGOS');
+  if(!state.sessionLog.length) lines.push('- Sin registros.');
+  state.sessionLog.forEach((r,i)=>lines.push(
+    `${i+1}. [${mdVal(r.time)}] **${mdVal(r.type)}** · Prioridad: ${mdVal(r.priority)} · Destino: ${mdVal(r.destination)} · ${mdVal(r.note)}`
+  ));
+  lines.push('');
+
+  lines.push('## PLAN DE SEGUIMIENTO');
+  lines.push(`- Fecha tentativa: ${mdVal(state.followup?.date)}`);
+  (state.followup?.items||[]).forEach((r,i)=>lines.push(
+    `${i+1}. **Qué vamos a verificar:** ${mdVal(r.verify)} | Evidencia esperada: ${mdVal(r.evidence)} | Métrica/señal: ${mdVal(r.metric)} | Responsable: ${mdVal(r.owner)} | Estado inicial/baseline: ${mdVal(r.baseline)}`
+  ));
+  if(!(state.followup?.items||[]).length) lines.push('- Sin puntos definidos.');
+  lines.push('');
+
+  lines.push('## ESTADO DE CIERRE');
+  lines.push(`- Base Sesión 1: ${baseSession1Complete()?'Completa':'Incompleta'}`);
+  lines.push(`- AS-IS detallado: ${asisDetailedComplete()?'Completo':'Incompleto'}`);
+  lines.push(`- Funnel de métricas: ${funnelMetricsComplete()?'Completo':'Incompleto'}`);
+  lines.push(`- Checklist Meta Ads: ${campaignChecklistReviewed()?'Revisado':'Pendiente'}`);
+  lines.push(`- Diagnóstico: ${diagnosticCount()} / 5 hallazgos`);
+  lines.push(`- Matriz H/A/H: ${hahComplete()?'Completa':'Incompleta'}`);
+  lines.push(`- Automatizaciones prioritarias: ${state.automations.filter(a=>rowHasData(a)).length} / 3`);
+  lines.push(`- HubSpot: ${hubspotReviewed()?'Revisado':'Pendiente'}`);
+  lines.push(`- Pipeline: ${pipelineDesigned()?'Diseñado':'Pendiente'}`);
+  lines.push(`- TO-BE: ${tobeDesigned()?'Diseñado':'Pendiente'}`);
+  lines.push(`- Fugas abiertas: ${openLeaks().length}`);
+  lines.push(`- Roadmap: ${state.roadmap.length} acciones`);
+  lines.push(`- Primer compromiso: ${commitmentDefined()?'Definido':'Pendiente'}`);
+  lines.push(`- Registro de decisiones: ${state.sessionLog.length} registros`);
+  lines.push(`- Seguimiento: ${followupPrepared()?'Preparado':'Pendiente'}`);
+  return lines.join('\n');
+}
+function exportReadable(){
+  saveState(false);
+  downloadBlob('ARQCOES_ULISES_SESION_2_RESULTADOS.md',buildReadable(),'text/markdown;charset=utf-8');
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const parsed=safeParse(reader.result);
+    if(!parsed || !parsed.meta){
+      alert('El archivo seleccionado no parece ser un respaldo válido de Sesión 2.');
+      return;
+    }
+    const ok=confirm('Esto reemplazará los datos actuales por el respaldo seleccionado. ¿Continuar?');
+    if(!ok) return;
+    state=mergeState(blankState(),parsed);
+    localStorage.setItem(STORE_KEY,JSON.stringify(state));
+    renderAll();
+    alert('Respaldo importado correctamente.');
+  };
+  reader.readAsText(file);
+}
+
+/* events */
+function updateDirectWarning(){
+  const select=document.getElementById('directControlSelect');
+  const warning=document.getElementById('directWarning');
+  if(!select||!warning)return;
+  warning.classList.toggle('hidden',select.value!=='NO');
+}
+function bindEvents(){
+  document.addEventListener('input',e=>{
+    const t=e.target;
+
+    if(t.dataset.base){
+      state.baseSession1[t.dataset.base]=t.value;
+    }
+    if(t.dataset.asis!==undefined){
+      state.asisDetailed[+t.dataset.asis][t.dataset.asfield]=t.value;
+    }
+    if(t.dataset.funnel!==undefined){
+      state.funnelMetrics[+t.dataset.funnel][t.dataset.ffield]=t.value;
+    }
+    if(t.dataset.campaign!==undefined){
+      state.campaignChecklist[+t.dataset.campaign][t.dataset.cfield]=t.value;
+    }
+    if(t.dataset.diagnostic!==undefined){
+      state.diagnosticFindings[+t.dataset.diagnostic][t.dataset.dgfield]=t.value;
+    }
+    if(t.dataset.validation!==undefined){
+      state.validations[+t.dataset.validation][t.dataset.vfield]=t.value;
+    }
+    if(t.dataset.hah!==undefined){
+      state.hah[+t.dataset.hah][t.dataset.hfield]=t.value;
+    }
+    if(t.dataset.hahDetail!==undefined){
+      const i=+t.dataset.hahDetail;
+      state.hah[i].detail=state.hah[i].detail||{};
+      state.hah[i].detail[t.dataset.dfield]=t.value;
+    }
+    if(t.dataset.auto!==undefined){
+      state.automations[+t.dataset.auto][t.dataset.afield]=t.value;
+    }
+    if(t.dataset.audit && t.hasAttribute('data-audit-value')){
+      const id=t.dataset.audit;
+      state.audit[id]=state.audit[id]||{value:'',pending:false};
+      state.audit[id].value=t.value;
+    }
+    if(t.dataset.pipe!==undefined){
+      state.pipeline[+t.dataset.pipe][t.dataset.pfield]=t.value;
+    }
+    if(t.dataset.tobe!==undefined){
+      const g=t.dataset.tobeGroup,i=+t.dataset.tobe;
+      state.tobe[g][i][t.dataset.tfield]=t.value;
+    }
+    if(t.dataset.qualityFix!==undefined){
+      state.quality[+t.dataset.qualityFix].fix=t.value;
+      renderLeakSummary();
+    }
+    if(t.dataset.priorityRow!==undefined){
+      const i=+t.dataset.priorityRow;
+      state.priorities[i][t.dataset.prfield]=t.value;
+      if(t.dataset.prfield==='priority') renderPriorities();
+    }
+    if(t.dataset.road!==undefined){
+      state.roadmap[+t.dataset.road][t.dataset.rfield]=t.value;
+    }
+    if(t.dataset.followup!==undefined){
+      state.followup.items[+t.dataset.followup][t.dataset.ffield]=t.value;
+    }
+    if(t.dataset.system){
+      state.system[t.dataset.system]=t.value;
+      state.summaryGenerated=false;
+      document.getElementById('systemSummaryView').classList.add('hidden');
+    }
+    if(t.dataset.key) state.fields[t.dataset.key]=t.type==='checkbox'?t.checked:t.value;
+    scheduleSave();
+    updateFinalStatus();
+  });
+
+  document.addEventListener('change',e=>{
+    const t=e.target;
+
+    if(t.id==='baseReviewed'){
+      state.baseSession1.reviewed=t.checked;
+      scheduleSave();updateFinalStatus();
+    }
+    if(t.id==='followupDate'){
+      state.followup.date=t.value;
+      scheduleSave();updateFinalStatus();
+    }
+    if(t.dataset.auditPending!==undefined){
+      const id=t.dataset.audit;
+      state.audit[id]=state.audit[id]||{value:'',pending:false};
+      state.audit[id].pending=t.checked;
+      scheduleSave();updateFinalStatus();
+    }
+    if(t.dataset.auditCheck!==undefined){
+      const id=t.dataset.audit;
+      state.audit[id]=state.audit[id]||{value:[],pending:false};
+      const arr=new Set(Array.isArray(state.audit[id].value)?state.audit[id].value:[]);
+      t.checked?arr.add(t.dataset.auditCheck):arr.delete(t.dataset.auditCheck);
+      state.audit[id].value=[...arr];
+      scheduleSave();updateFinalStatus();
+    }
+    if(t.dataset.quality!==undefined){
+      const i=+t.dataset.quality;
+      state.quality[i].answer=t.value;
+      const leak=t.value===QUALITY[i].leakWhen;
+      document.getElementById('quality-fix-'+i).classList.toggle('hidden',!leak);
+      renderLeakSummary();scheduleSave();updateFinalStatus();
+    }
+    if(t.dataset.key==='commit.directControl'){
+      state.fields[t.dataset.key]=t.value;
+      updateDirectWarning();scheduleSave();updateFinalStatus();
+    }
+  });
+
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-action]');
+    if(!b)return;
+    const act=b.dataset.action;
+    if(act==='toggle-hah-detail'){
+      const i=+b.dataset.index;
+      if(hahDetailOpen.has(i)) hahDetailOpen.delete(i); else hahDetailOpen.add(i);
+      renderHAH();
+    }
+    if(act==='add-asis'){
+      state.asisDetailed.push(blankAsisDetailed());renderAsisDetailed();saveState(false);
+    }
+    if(act==='delete-asis'){
+      const i=+b.dataset.index;
+      if(!state.asisDetailed[i]?.locked){state.asisDetailed.splice(i,1);renderAsisDetailed();saveState(false);}
+    }
+    if(act==='add-diagnostic'){
+      if(state.diagnosticFindings.length>=5){alert('La síntesis diagnóstica permite un máximo de 5 hallazgos.');return;}
+      state.diagnosticFindings.push(blankDiagnosticFinding());renderDiagnosticFindings();saveState(false);
+    }
+    if(act==='delete-diagnostic'){
+      state.diagnosticFindings.splice(+b.dataset.index,1);renderDiagnosticFindings();saveState(false);
+    }
+    if(act==='add-pipeline'){
+      state.pipeline.push(blankPipelineRow());renderPipeline();saveState(false);
+    }
+    if(act==='delete-pipeline'){
+      const i=+b.dataset.index;
+      if(state.pipeline.length===1){state.pipeline[0]=blankPipelineRow()} else state.pipeline.splice(i,1);
+      renderPipeline();saveState(false);
+    }
+    if(act==='add-tobe'){
+      state.tobe[b.dataset.group].push(blankTobeRow());renderTobe();saveState(false);
+    }
+    if(act==='delete-tobe'){
+      state.tobe[b.dataset.group].splice(+b.dataset.index,1);renderTobe();saveState(false);
+    }
+    if(act==='add-priority'){
+      state.priorities.push(blankPriority());renderPriorities();saveState(false);
+    }
+    if(act==='delete-priority'){
+      state.priorities.splice(+b.dataset.index,1);renderPriorities();saveState(false);
+    }
+    if(act==='priority-up'){
+      const i=+b.dataset.index;if(i>0){[state.priorities[i-1],state.priorities[i]]=[state.priorities[i],state.priorities[i-1]];renderPriorities();saveState(false);}
+    }
+    if(act==='priority-down'){
+      const i=+b.dataset.index;if(i<state.priorities.length-1){[state.priorities[i+1],state.priorities[i]]=[state.priorities[i],state.priorities[i+1]];renderPriorities();saveState(false);}
+    }
+    if(act==='add-roadmap'){
+      if(state.roadmap.length>=7){alert('El roadmap permite un máximo de 7 acciones.');return;}
+      state.roadmap.push(blankRoadmap());renderRoadmap();saveState(false);
+    }
+    if(act==='delete-roadmap'){
+      state.roadmap.splice(+b.dataset.index,1);renderRoadmap();saveState(false);
+    }
+    if(act==='add-followup'){
+      if(state.followup.items.length>=5){alert('El seguimiento permite un máximo de 5 elementos.');return;}
+      state.followup.items.push(blankFollowup());renderFollowup();saveState(false);
+    }
+    if(act==='delete-followup'){
+      state.followup.items.splice(+b.dataset.index,1);renderFollowup();saveState(false);
+    }
+    if(act==='edit-log'){
+      openLogModal(+b.dataset.index);
+    }
+    if(act==='delete-log'){
+      const i=+b.dataset.index;
+      if(confirm('¿Eliminar este registro de sesión?')){
+        state.sessionLog.splice(i,1);renderSessionLog();saveState(false);
+      }
+    }
+  });
+
+  document.getElementById('saveBtn').addEventListener('click',()=>saveState(true));
+  document.getElementById('downloadBtn').addEventListener('click',exportReadable);
+  document.getElementById('backupBtn').addEventListener('click',exportBackup);
+  document.getElementById('resultsBtn').addEventListener('click',exportReadable);
+  document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
+  document.getElementById('importFile').addEventListener('change',e=>{if(e.target.files[0])importBackup(e.target.files[0]);e.target.value=''});
+  document.getElementById('generateSummaryBtn').addEventListener('click',()=>generateSystemSummary(true));
+
+  document.getElementById('registerFindingBtn').addEventListener('click',()=>openLogModal(null));
+  document.getElementById('floatingRegisterBtn').addEventListener('click',()=>openLogModal(null));
+  document.getElementById('closeLogModal').addEventListener('click',closeLogModal);
+  document.getElementById('cancelLogBtn').addEventListener('click',closeLogModal);
+  document.getElementById('saveLogBtn').addEventListener('click',saveLogRecord);
+  document.getElementById('sessionLogModal').addEventListener('click',e=>{if(e.target.id==='sessionLogModal')closeLogModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('sessionLogModal').classList.contains('hidden'))closeLogModal()});
+
+  document.getElementById('clearBtn').addEventListener('click',()=>{
+    if(!confirm('Esto borrará todas las respuestas guardadas de Sesión 2.'))return;
+    if(!confirm('Confirmación final: se borrará el trabajo de esta sesión en este navegador. ¿Continuar?'))return;
+    localStorage.removeItem(STORE_KEY);
+    state=blankState();
+    renderAll();
+  });
+
+  window.addEventListener('beforeprint',()=>{
+    document.querySelectorAll('textarea').forEach(t=>{t.dataset.prevHeight=t.style.height;t.style.height='auto';t.style.height=t.scrollHeight+'px'});
+  });
+  window.addEventListener('afterprint',()=>{
+    document.querySelectorAll('textarea').forEach(t=>{t.style.height=t.dataset.prevHeight||'';delete t.dataset.prevHeight});
+  });
+
+  window.addEventListener('beforeunload',()=>saveState(false));
+}
+
+/* progress */
+function setupProgress(){
+  const sections=[...document.querySelectorAll('[data-section]')];
+  const links=[...document.querySelectorAll('#anchorNav a')];
+  const setCurrent=n=>{
+    document.getElementById('progressCount').textContent=`${n} / 11`;
+    document.getElementById('progressBar').style.width=`${(n/11)*100}%`;
+    links.forEach((a,i)=>a.classList.toggle('active',i===n-1));
+  };
+  const io=new IntersectionObserver(entries=>{
+    const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(visible)setCurrent(+visible.target.dataset.section);
+  },{rootMargin:'-25% 0px -55% 0px',threshold:[0,.1,.3,.6]});
+  sections.forEach(s=>io.observe(s));
+  setCurrent(1);
+}
+
+/* render */
+function renderAll(){
+  renderBaseSession1();
+  renderAsisDetailed();
+  renderFunnelMetrics();
+  renderCampaignChecklist();
+  renderDiagnosticFindings();
+  renderValidations();
+  renderHAH();
+  renderAutomations();
+  renderAudit();
+  renderPipeline();
+  renderTobe();
+  renderQuality();
+  renderPriorities();
+  renderRoadmap();
+  renderSystem();
+  renderFollowup();
+  renderSessionLog();
+  restoreStaticFields();
+  updateSavedUI(false);
+  updateFinalStatus();
+}
+
+loadState();
+renderAll();
+bindEvents();
+setupProgress();
+})();
+</script>
+</body>
+</html>
